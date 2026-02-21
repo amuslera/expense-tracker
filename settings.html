@@ -10,6 +10,10 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        html {
+            background: #16161E;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             background: #16161E;
@@ -150,6 +154,20 @@
 
         .btn-secondary:hover {
             background: #2E2E42;
+        }
+
+        .btn-danger {
+            background: rgba(255, 77, 77, 0.15);
+            color: #FF4D4D;
+            margin-top: 8px;
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 77, 77, 0.25);
+        }
+
+        .btn-danger svg {
+            stroke: #FF4D4D;
         }
 
         .budget-list {
@@ -334,7 +352,7 @@
                 </svg>
                 Export Data (JSON)
             </button>
-            <button class="btn btn-secondary" onclick="clearData()">
+            <button class="btn btn-danger" onclick="clearData()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="3 6 5 6 21 6"></polyline>
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
