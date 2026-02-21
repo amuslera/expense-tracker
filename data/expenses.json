@@ -72,6 +72,19 @@
       "source": "whatsapp-text",
       "status": "confirmed",
       "createdAt": "2026-02-21T06:10:20.000Z"
+    },
+    {
+      "id": "txn-1740120495616",
+      "amount": 37.26,
+      "currency": "USD",
+      "category": "Shopping",
+      "description": "Home Depot - Garden supplies (seeds, rake)",
+      "paymentMethod": "Card",
+      "date": "2025-09-12T17:59:00.000Z",
+      "source": "whatsapp-photo",
+      "sourceMessageId": "image-1771660067616",
+      "status": "confirmed",
+      "createdAt": "2026-02-21T07:48:15.000Z"
     }
   ],
   "categories": [
