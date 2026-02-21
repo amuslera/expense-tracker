@@ -1,0 +1,117 @@
+{
+  "transactions": [
+    {
+      "id": "txn-1708531200000",
+      "amount": 86.00,
+      "currency": "USD",
+      "category": "Bills & Utilities",
+      "description": "X subscription",
+      "paymentMethod": "Card",
+      "date": "2026-02-19T18:30:00.000Z",
+      "source": "whatsapp-voice",
+      "status": "confirmed",
+      "createdAt": "2026-02-19T18:30:00.000Z"
+    },
+    {
+      "id": "txn-1708444800000",
+      "amount": 45.00,
+      "currency": "USD",
+      "category": "Food & Dining",
+      "description": "Lunch at downtown café",
+      "paymentMethod": "Card",
+      "date": "2026-02-18T12:15:00.000Z",
+      "source": "whatsapp-text",
+      "status": "confirmed",
+      "createdAt": "2026-02-18T12:15:00.000Z"
+    },
+    {
+      "id": "txn-1708358400000",
+      "amount": 25.50,
+      "currency": "USD",
+      "category": "Transportation",
+      "description": "Uber ride to office",
+      "paymentMethod": "Card",
+      "date": "2026-02-17T08:45:00.000Z",
+      "source": "whatsapp-text",
+      "status": "confirmed",
+      "createdAt": "2026-02-17T08:45:00.000Z"
+    },
+    {
+      "id": "txn-1708272000000",
+      "amount": 120.00,
+      "currency": "USD",
+      "category": "Shopping",
+      "description": "New headphones",
+      "paymentMethod": "Card",
+      "date": "2026-02-16T15:20:00.000Z",
+      "source": "whatsapp-text",
+      "status": "confirmed",
+      "createdAt": "2026-02-16T15:20:00.000Z"
+    },
+    {
+      "id": "txn-1708185600000",
+      "amount": 15.99,
+      "currency": "USD",
+      "category": "Entertainment",
+      "description": "Netflix subscription",
+      "paymentMethod": "Card",
+      "date": "2026-02-15T10:00:00.000Z",
+      "source": "whatsapp-voice",
+      "status": "confirmed",
+      "createdAt": "2026-02-15T10:00:00.000Z"
+    },
+    {
+      "id": "txn-1708099200000",
+      "amount": 67.80,
+      "currency": "USD",
+      "category": "Food & Dining",
+      "description": "Grocery shopping",
+      "paymentMethod": "Cash",
+      "date": "2026-02-14T16:30:00.000Z",
+      "source": "whatsapp-photo",
+      "status": "confirmed",
+      "createdAt": "2026-02-14T16:30:00.000Z"
+    },
+    {
+      "id": "txn-1708012800000",
+      "amount": 32.00,
+      "currency": "USD",
+      "category": "Transportation",
+      "description": "Gas station",
+      "paymentMethod": "Card",
+      "date": "2026-02-13T14:00:00.000Z",
+      "source": "whatsapp-text",
+      "status": "confirmed",
+      "createdAt": "2026-02-13T14:00:00.000Z"
+    },
+    {
+      "id": "txn-1707926400000",
+      "amount": 89.99,
+      "currency": "USD",
+      "category": "Health",
+      "description": "Pharmacy - medication",
+      "paymentMethod": "Card",
+      "date": "2026-02-12T11:30:00.000Z",
+      "source": "whatsapp-text",
+      "status": "confirmed",
+      "createdAt": "2026-02-12T11:30:00.000Z"
+    }
+  ],
+  "categories": [
+    "Bills & Utilities",
+    "Food & Dining",
+    "Transportation",
+    "Shopping",
+    "Entertainment",
+    "Health",
+    "Other"
+  ],
+  "paymentMethods": [
+    "Cash",
+    "Card"
+  ],
+  "settings": {
+    "defaultCurrency": "USD",
+    "defaultPaymentMethod": "Card"
+  }
+}
