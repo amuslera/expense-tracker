@@ -124,6 +124,95 @@
             border-color: #7C5CFC;
         }
 
+        /* Custom Date Picker Modal */
+        .date-picker-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .date-picker-modal.active {
+            display: flex;
+        }
+
+        .date-picker-content {
+            background: #1E1E2A;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .date-picker-content h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #F0F0F5;
+        }
+
+        .date-input-group {
+            margin-bottom: 16px;
+        }
+
+        .date-input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #8888A0;
+            margin-bottom: 8px;
+        }
+
+        .date-input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #2E2E42;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #F0F0F5;
+            background: #26263A;
+        }
+
+        .date-picker-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .date-picker-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .date-picker-actions .btn-cancel {
+            background: #26263A;
+            color: #8888A0;
+        }
+
+        .date-picker-actions .btn-cancel:hover {
+            background: #2E2E42;
+        }
+
+        .date-picker-actions .btn-apply {
+            background: #7C5CFC;
+            color: white;
+        }
+
+        .date-picker-actions .btn-apply:hover {
+            background: #9B85FC;
+        }
+
         /* Sync Status */
         .sync-status {
             display: flex;
@@ -713,6 +802,7 @@
             <button class="period-btn active" data-period="month">This Month</button>
             <button class="period-btn" data-period="year">This Year</button>
             <button class="period-btn" data-period="all">All Time</button>
+            <button class="period-btn" onclick="openCustomDatePicker()">Custom</button>
         </div>
 
         <!-- Sync Status -->
@@ -744,6 +834,25 @@
         <div class="card">
             <h3>Transactions</h3>
             <div id="transactions"></div>
+        </div>
+    </div>
+
+    <!-- Custom Date Picker Modal -->
+    <div id="datePickerModal" class="date-picker-modal">
+        <div class="date-picker-content">
+            <h2>Custom Date Range</h2>
+            <div class="date-input-group">
+                <label for="customStartDate">From</label>
+                <input type="date" id="customStartDate">
+            </div>
+            <div class="date-input-group">
+                <label for="customEndDate">To</label>
+                <input type="date" id="customEndDate">
+            </div>
+            <div class="date-picker-actions">
+                <button class="btn-cancel" onclick="closeDatePicker()">Cancel</button>
+                <button class="btn-apply" onclick="applyCustomDate()">Apply</button>
+            </div>
         </div>
     </div>
 
@@ -896,6 +1005,8 @@
 
         let allTransactions = [];
         let currentPeriod = 'month';
+        let customStartDate = null;
+        let customEndDate = null;
         let categoryChart = null;
         let currentTransactionId = null;
         let lastSyncTime = null;
@@ -927,7 +1038,7 @@
             .subscribe();
 
         // Period filter handlers
-        document.querySelectorAll('.period-btn').forEach(btn => {
+        document.querySelectorAll('.period-btn[data-period]').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
@@ -935,6 +1046,28 @@
                 updateDisplay();
             });
         });
+
+        function openCustomDatePicker() {
+            document.getElementById('datePickerModal').classList.add('active');
+        }
+
+        function closeDatePicker() {
+            document.getElementById('datePickerModal').classList.remove('active');
+        }
+
+        function applyCustomDate() {
+            const start = document.getElementById('customStartDate').value;
+            const end = document.getElementById('customEndDate').value;
+            if (!start || !end) { alert('Please select both dates'); return; }
+            customStartDate = new Date(start);
+            customEndDate = new Date(end);
+            customEndDate.setHours(23, 59, 59, 999);
+            currentPeriod = 'custom';
+            document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.period-btn')[4].classList.add('active');
+            closeDatePicker();
+            updateDisplay();
+        }
 
         function updateDisplay() {
             const filtered = filterTransactionsByPeriod(allTransactions, currentPeriod);
@@ -960,6 +1093,12 @@
                     const yearStart = new Date(now.getFullYear(), 0, 1);
                     return transactions.filter(t => new Date(t.date) >= yearStart);
 
+                case 'custom':
+                    return transactions.filter(t => {
+                        const d = new Date(t.date);
+                        return d >= customStartDate && d <= customEndDate;
+                    });
+
                 case 'all':
                 default:
                     return transactions;
@@ -974,7 +1113,8 @@
                 'week': 'This Week',
                 'month': 'This Month',
                 'year': 'This Year',
-                'all': 'All Time'
+                'all': 'All Time',
+                'custom': 'Custom Range'
             };
 
             document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
