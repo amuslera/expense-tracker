@@ -6,9 +6,10 @@
 (function() {
     'use strict';
 
-    // Password hash (SHA-256 of "expense2024")
-    // To change password, generate new hash: await crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword'))
-    const PASSWORD_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // "expense2024"
+    // Password hash (SHA-256 of "admin")
+    // To change password, generate new hash in console:
+    // Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword')))).map(b => b.toString(16).padStart(2, '0')).join('')
+    const PASSWORD_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // "admin"
 
     const AUTH_STORAGE_KEY = 'expense_tracker_auth';
     const AUTH_EXPIRY_HOURS = 24; // Session expires after 24 hours
@@ -123,7 +124,7 @@
                     </button>
                 </form>
                 <div class="auth-modal__footer">
-                    <small>Password: expense2024 (default)</small>
+                    <small>Default password: admin</small>
                 </div>
             </div>
         `;
@@ -185,11 +186,8 @@
      */
     function init() {
         if (!isAuthenticated()) {
-            // Hide main content
-            document.body.style.opacity = '0';
-
             // Show login modal
-            showLoginModal();
+            setTimeout(showLoginModal, 100);
         } else {
             // User is authenticated - show content
             document.body.style.opacity = '1';
