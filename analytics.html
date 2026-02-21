@@ -95,7 +95,7 @@
 
         .stat-value {
             font-size: 24px;
-            font-weight: 700;
+            font-weight: 600;
             color: #F0F0F5;
             margin-bottom: 4px;
         }
@@ -882,7 +882,23 @@
                             }
                         }
                     }
-                }
+                },
+                plugins: [{
+                    id: 'centerFill',
+                    beforeDraw: function(chart) {
+                        const meta = chart.getDatasetMeta(0);
+                        if (meta.data.length > 0) {
+                            const el = meta.data[0];
+                            const ctx = chart.ctx;
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.arc(el.x, el.y, el.innerRadius, 0, 2 * Math.PI);
+                            ctx.fillStyle = '#1E1E2A';
+                            ctx.fill();
+                            ctx.restore();
+                        }
+                    }
+                }]
             });
         }
     </script>
