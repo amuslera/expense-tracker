@@ -12,24 +12,74 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: #f8fafc;
+            background: #16161E;
             min-height: 100vh;
             padding: 20px;
             padding-bottom: 100px;
-            color: #1e293b;
+            color: #F0F0F5;
         }
 
         .container {
-            max-width: 640px;
+            max-width: 680px;
             margin: 0 auto;
         }
 
-        h1 {
-            text-align: center;
-            color: #1e293b;
-            font-size: 28px;
-            margin-bottom: 24px;
+        /* App Header */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            margin-bottom: 20px;
+        }
+
+        .app-header__title {
+            font-size: 20px;
             font-weight: 700;
+            color: #F0F0F5;
+        }
+
+        .app-header__right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .app-header__add {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #26263A;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #8888A0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .app-header__add:hover {
+            background: #2E2E42;
+            color: #F0F0F5;
+        }
+
+        .app-header__avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #26263A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #55556A;
+        }
+
+        .app-header__avatar svg {
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
         }
 
         /* Period Filter */
@@ -37,10 +87,9 @@
             display: flex;
             gap: 8px;
             margin-bottom: 20px;
-            background: white;
+            background: #1E1E2A;
             padding: 12px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 16px;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
@@ -49,12 +98,12 @@
             flex: 1;
             min-width: 80px;
             padding: 10px 16px;
-            background: #f1f5f9;
+            background: #26263A;
             border: 2px solid transparent;
-            border-radius: 8px;
+            border-radius: 20px;
             font-size: 14px;
             font-weight: 600;
-            color: #64748b;
+            color: #8888A0;
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
@@ -65,14 +114,14 @@
         }
 
         .period-btn:hover {
-            background: #e2e8f0;
-            color: #475569;
+            background: #2E2E42;
+            color: #F0F0F5;
         }
 
         .period-btn.active {
-            background: #2563eb;
+            background: #7C5CFC;
             color: white;
-            border-color: #2563eb;
+            border-color: #7C5CFC;
         }
 
         /* Sync Status */
@@ -83,7 +132,7 @@
             gap: 6px;
             padding: 8px 0 4px;
             font-size: 12px;
-            color: #94a3b8;
+            color: #55556A;
         }
 
         .sync-status svg {
@@ -97,7 +146,7 @@
         }
 
         .sync-status svg:hover {
-            color: #64748b;
+            color: #8888A0;
         }
 
         .sync-status.syncing svg {
@@ -110,18 +159,17 @@
         }
 
         .card {
-            background: white;
+            background: #1E1E2A;
             padding: 24px;
             margin: 16px 0;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 16px;
         }
 
         .card h3 {
-            font-size: 13px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #64748b;
+            letter-spacing: 0.08em;
+            color: #8888A0;
             margin-bottom: 16px;
             font-weight: 600;
         }
@@ -129,12 +177,12 @@
         .amount {
             font-size: 42px;
             font-weight: 700;
-            color: #2563eb;
+            color: #F0F0F5;
             margin: 8px 0;
         }
 
         .subtitle {
-            color: #94a3b8;
+            color: #8888A0;
             font-size: 14px;
         }
 
@@ -150,7 +198,7 @@
             display: flex;
             align-items: center;
             padding: 16px;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #2E2E42;
             min-height: 80px;
             cursor: pointer;
             transition: background 0.2s, transform 0.3s;
@@ -169,7 +217,7 @@
             right: 0;
             top: 0;
             bottom: 0;
-            background: #dc2626;
+            background: #FF4D4D;
             display: flex;
             align-items: center;
             padding: 0 20px;
@@ -195,7 +243,7 @@
 
         .swipe-confirm-yes {
             background: white;
-            color: #dc2626;
+            color: #FF4D4D;
         }
 
         .swipe-confirm-no {
@@ -216,11 +264,11 @@
         }
 
         .transaction:hover {
-            background: #f8fafc;
+            background: #26263A;
         }
 
         .transaction:active {
-            background: #f1f5f9;
+            background: #26263A;
         }
 
         .transaction-icon {
@@ -241,9 +289,9 @@
         }
 
         .transaction-title {
-            font-weight: 600;
+            font-weight: 500;
             font-size: 16px;
-            color: #1e293b;
+            color: #F0F0F5;
             margin-bottom: 4px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -251,15 +299,40 @@
         }
 
         .transaction-meta {
-            font-size: 13px;
-            color: #94a3b8;
+            font-size: 12px;
+            color: #8888A0;
         }
 
         .transaction-amount {
-            font-weight: 700;
+            font-weight: 600;
             font-size: 18px;
-            color: #1e293b;
+            color: #F0F0F5;
             text-align: right;
+        }
+
+        /* Date Separator */
+        .date-separator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px 4px;
+        }
+
+        .date-separator::before,
+        .date-separator::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #2E2E42;
+        }
+
+        .date-separator span {
+            font-size: 11px;
+            font-weight: 600;
+            color: #8888A0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
         /* Modal */
@@ -286,24 +359,23 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(4px);
         }
 
         .modal-content {
             position: relative;
-            background: white;
+            background: #1E1E2A;
             border-radius: 16px;
             max-width: 500px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
         .modal-header {
             padding: 24px 24px 16px 24px;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #2E2E42;
             display: flex;
             align-items: center;
             gap: 16px;
@@ -320,17 +392,17 @@
         .modal-title {
             font-size: 20px;
             font-weight: 700;
-            color: #1e293b;
+            color: #F0F0F5;
             margin-bottom: 4px;
         }
 
         .modal-category {
             font-size: 14px;
-            color: #64748b;
+            color: #8888A0;
         }
 
         .modal-close {
-            background: #f1f5f9;
+            background: #26263A;
             border: none;
             border-radius: 8px;
             width: 36px;
@@ -339,15 +411,15 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: #64748b;
+            color: #8888A0;
             font-size: 24px;
             line-height: 1;
             transition: all 0.2s;
         }
 
         .modal-close:hover {
-            background: #e2e8f0;
-            color: #475569;
+            background: #2E2E42;
+            color: #F0F0F5;
         }
 
         .modal-body {
@@ -378,23 +450,23 @@
         }
 
         .btn-edit {
-            background: #f1f5f9;
-            color: #475569;
+            background: #26263A;
+            color: #8888A0;
         }
 
         .btn-edit:hover {
-            background: #e2e8f0;
-            color: #334155;
+            background: #2E2E42;
+            color: #F0F0F5;
         }
 
         .btn-delete {
-            background: #fee2e2;
-            color: #dc2626;
+            background: rgba(255, 77, 77, 0.15);
+            color: #FF4D4D;
         }
 
         .btn-delete:hover {
-            background: #fecaca;
-            color: #b91c1c;
+            background: rgba(255, 77, 77, 0.25);
+            color: #FF4D4D;
         }
 
         .btn-delete:active {
@@ -410,7 +482,7 @@
             display: block;
             font-size: 14px;
             font-weight: 600;
-            color: #475569;
+            color: #8888A0;
             margin-bottom: 8px;
         }
 
@@ -418,37 +490,38 @@
         .form-select {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #2E2E42;
             border-radius: 8px;
             font-size: 15px;
             font-family: inherit;
-            color: #1e293b;
+            color: #F0F0F5;
+            background: #26263A;
             transition: all 0.2s;
         }
 
         .form-input:focus,
         .form-select:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: #7C5CFC;
+            box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.15);
         }
 
         .btn-primary {
-            background: #2563eb;
+            background: #7C5CFC;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #1d4ed8;
+            background: #9B85FC;
         }
 
         .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
+            background: #26263A;
+            color: #8888A0;
         }
 
         .btn-secondary:hover {
-            background: #e2e8f0;
+            background: #2E2E42;
         }
 
         /* Floating Action Button */
@@ -459,8 +532,8 @@
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: #2563eb;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+            background: #7C5CFC;
+            box-shadow: 0 4px 12px rgba(124, 92, 252, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -472,8 +545,8 @@
 
         .fab:hover {
             transform: scale(1.05);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.5);
-            background: #1d4ed8;
+            box-shadow: 0 6px 16px rgba(124, 92, 252, 0.5);
+            background: #9B85FC;
         }
 
         .fab:active {
@@ -493,14 +566,13 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: white;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+            background: #1E1E2A;
             z-index: 1500;
-            border-top: 1px solid #f1f5f9;
+            border-top: 1px solid #2E2E42;
         }
 
         .bottom-nav-wrapper {
-            max-width: 640px;
+            max-width: 680px;
             margin: 0 auto;
             display: flex;
             justify-content: space-around;
@@ -516,7 +588,7 @@
             padding: 8px;
             cursor: pointer;
             text-decoration: none;
-            color: #94a3b8;
+            color: #55556A;
             transition: all 0.2s;
             min-height: 64px;
             justify-content: center;
@@ -525,12 +597,12 @@
         }
 
         .nav-item:hover {
-            background: #f8fafc;
-            color: #64748b;
+            background: #26263A;
+            color: #8888A0;
         }
 
         .nav-item.active {
-            color: #2563eb;
+            color: #7C5CFC;
         }
 
         .nav-item svg {
@@ -546,26 +618,26 @@
             font-weight: 600;
         }
 
-        /* Category Colors - Muted, Professional */
-        .cat-food { background: #86efac; }
-        .cat-transport { background: #93c5fd; }
-        .cat-shopping { background: #fcd34d; }
-        .cat-entertainment { background: #f9a8d4; }
-        .cat-bills { background: #c4b5fd; }
-        .cat-health { background: #fca5a5; }
-        .cat-other { background: #cbd5e1; }
+        /* Category Colors - Dark Tinted */
+        .cat-food { background: rgba(134, 239, 172, 0.15); }
+        .cat-transport { background: rgba(147, 197, 253, 0.15); }
+        .cat-shopping { background: rgba(252, 211, 77, 0.15); }
+        .cat-entertainment { background: rgba(249, 168, 212, 0.15); }
+        .cat-bills { background: rgba(196, 181, 253, 0.15); }
+        .cat-health { background: rgba(252, 165, 165, 0.15); }
+        .cat-other { background: rgba(203, 213, 225, 0.15); }
 
         /* Empty State */
         .empty-state {
             text-align: center;
             padding: 40px 20px;
-            color: #94a3b8;
+            color: #55556A;
         }
 
         .empty-state svg {
             width: 64px;
             height: 64px;
-            stroke: #cbd5e1;
+            stroke: #55556A;
             stroke-width: 2;
             margin: 0 auto 16px;
         }
@@ -579,9 +651,6 @@
             body {
                 padding: 12px;
                 padding-bottom: 88px;
-            }
-            h1 {
-                font-size: 24px;
             }
             .amount {
                 font-size: 36px;
@@ -611,11 +680,32 @@
                 font-size: 28px;
             }
         }
+
+        @media (min-width: 641px) {
+            .fab {
+                display: none;
+            }
+            .app-header__add {
+                display: flex;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Expense Tracker</h1>
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="app-header__title">JJ Gasto</div>
+            <div class="app-header__right">
+                <button class="app-header__add" onclick="showAddExpense()">+ Add manually</button>
+                <div class="app-header__avatar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+            </div>
+        </div>
 
         <!-- Period Filter -->
         <div class="period-filter">
@@ -754,6 +844,8 @@
 
     <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
         // Category Configuration - Muted, Professional Colors
@@ -767,55 +859,72 @@
             'Other': { icon: '📌', class: 'cat-other', color: '#cbd5e1' }
         };
 
+        // Supabase
+        const SUPABASE_URL = 'https://mkcscqxbezbicpyduowy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rY3NjcXhiZXpiaWNweWR1b3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2NTkxOTIsImV4cCI6MjA4NzIzNTE5Mn0.K3773WkG-uNYts-2utFQnyvR-U5CaCURQfZ7_qFdcow';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function mapFromSupabase(row) {
+            return {
+                id: row.id,
+                amount: Number(row.amount),
+                currency: row.currency,
+                category: row.category,
+                description: row.description,
+                paymentMethod: row.payment_method,
+                date: row.date,
+                source: row.source,
+                status: row.status,
+                createdAt: row.created_at
+            };
+        }
+
+        function mapToSupabase(t) {
+            return {
+                id: t.id,
+                amount: t.amount,
+                currency: t.currency || 'USD',
+                category: t.category,
+                description: t.description,
+                payment_method: t.paymentMethod,
+                date: t.date,
+                source: t.source,
+                status: t.status || 'confirmed',
+                created_at: t.createdAt
+            };
+        }
+
         let allTransactions = [];
         let currentPeriod = 'month';
         let categoryChart = null;
         let currentTransactionId = null;
         let lastSyncTime = null;
 
-        // Load and display data
-        function loadData() {
+        // Load and display data from Supabase
+        async function loadData() {
             updateSyncStatus('syncing');
-            // Always fetch from server to get latest data from JJ Gasto
-            // LocalStorage is only used for offline fallback
-            fetch('data/expenses.json?t=' + Date.now())
-                .then(r => r.json())
-                .then(data => {
-                    // Update localStorage with latest data
-                    localStorage.setItem('expenseData', JSON.stringify(data));
-                    allTransactions = (data.transactions || []).sort((a, b) =>
-                        new Date(b.date) - new Date(a.date)
-                    );
-                    lastSyncTime = new Date();
-                    updateSyncStatus('done');
-                    updateDisplay();
-                })
-                .catch(err => {
-                    console.error('Error loading data from server, trying localStorage...', err);
-                    updateSyncStatus('error');
-                    // Fallback to localStorage if server fetch fails (offline mode)
-                    const stored = localStorage.getItem('expenseData');
-                    if (stored) {
-                        try {
-                            const data = JSON.parse(stored);
-                            allTransactions = (data.transactions || []).sort((a, b) =>
-                                new Date(b.date) - new Date(a.date)
-                            );
-                            updateDisplay();
-                            showToast('Showing cached data - may be out of date');
-                        } catch (e) {
-                            console.error('Error parsing localStorage:', e);
-                            document.getElementById('transactions').innerHTML =
-                                '<div class="empty-state"><p>Error loading data. Please refresh the page.</p></div>';
-                        }
-                    } else {
-                        document.getElementById('transactions').innerHTML =
-                            '<div class="empty-state"><p>Error loading data. Please refresh the page.</p></div>';
-                    }
-                });
+            try {
+                const { data, error } = await sb
+                    .from('transactions')
+                    .select('*')
+                    .order('date', { ascending: false });
+                if (error) throw error;
+                allTransactions = (data || []).map(mapFromSupabase);
+                lastSyncTime = new Date();
+                updateSyncStatus('done');
+                updateDisplay();
+            } catch (err) {
+                console.error('Error loading data from Supabase:', err);
+                updateSyncStatus('error');
+            }
         }
 
         loadData();
+
+        // Real-time subscription — updates UI when data changes
+        sb.channel('transactions-changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, () => loadData())
+            .subscribe();
 
         // Period filter handlers
         document.querySelectorAll('.period-btn').forEach(btn => {
@@ -925,7 +1034,7 @@
                                 usePointStyle: true,
                                 pointStyle: 'circle',
                                 font: { size: 12, family: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif' },
-                                color: '#64748b',
+                                color: '#8888A0',
                                 generateLabels: function(chart) {
                                     const data = chart.data;
                                     if (data.labels.length && data.datasets.length) {
@@ -945,11 +1054,12 @@
                             }
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(30, 41, 59, 0.95)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
+                            backgroundColor: '#26263A',
+                            titleColor: '#F0F0F5',
+                            bodyColor: '#F0F0F5',
                             padding: 12,
-                            borderWidth: 0,
+                            borderWidth: 1,
+                            borderColor: '#2E2E42',
                             cornerRadius: 8,
                             callbacks: {
                                 label: function(context) {
@@ -978,10 +1088,20 @@
                         const ctx = chart.ctx;
                         ctx.restore();
 
+                        // Fill center of donut with card bg
+                        const meta = chart.getDatasetMeta(0);
+                        if (meta.data.length > 0) {
+                            const el = meta.data[0];
+                            ctx.beginPath();
+                            ctx.arc(el.x, el.y, el.innerRadius, 0, 2 * Math.PI);
+                            ctx.fillStyle = '#1E1E2A';
+                            ctx.fill();
+                        }
+
                         const fontSize = (height / 200).toFixed(2);
                         ctx.font = `bold ${fontSize}em sans-serif`;
                         ctx.textBaseline = 'middle';
-                        ctx.fillStyle = '#1e293b';
+                        ctx.fillStyle = '#F0F0F5';
 
                         const totalText = '$' + total.toFixed(0);
                         const textX = Math.round((width - ctx.measureText(totalText).width) / 2);
@@ -991,7 +1111,7 @@
 
                         // Subtitle
                         ctx.font = `${fontSize * 0.5}em sans-serif`;
-                        ctx.fillStyle = '#94a3b8';
+                        ctx.fillStyle = '#8888A0';
                         const subtitleText = 'Total Spent';
                         const subtitleX = Math.round((width - ctx.measureText(subtitleText).width) / 2);
                         ctx.fillText(subtitleText, subtitleX, textY + 25);
@@ -1010,22 +1130,34 @@
                 return;
             }
 
-            container.innerHTML = transactions.map(t => {
+            // Group transactions by date
+            const grouped = [];
+            let lastDateKey = null;
+            transactions.forEach(t => {
                 const date = new Date(t.date);
-                const dateStr = date.toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
+                const dateKey = date.toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', year: 'numeric'
                 });
-                const config = CATEGORY_CONFIG[t.category] || CATEGORY_CONFIG['Other'];
+                if (dateKey !== lastDateKey) {
+                    grouped.push({ type: 'separator', dateStr: dateKey });
+                    lastDateKey = dateKey;
+                }
+                grouped.push({ type: 'transaction', data: t });
+            });
 
+            container.innerHTML = grouped.map(item => {
+                if (item.type === 'separator') {
+                    return `<div class="date-separator"><span>${item.dateStr.toUpperCase()}</span></div>`;
+                }
+                const t = item.data;
+                const config = CATEGORY_CONFIG[t.category] || CATEGORY_CONFIG['Other'];
                 return `<div class="transaction-container">
                     <div class="transaction-swipe-actions">Delete</div>
                     <div class="transaction" data-id="${t.id}" onclick="showTransactionDetail('${t.id}')">
                         <div class="transaction-icon ${config.class}">${config.icon}</div>
                         <div class="transaction-details">
                             <div class="transaction-title">${escapeHtml(t.description)}</div>
-                            <div class="transaction-meta">${t.category} • ${t.paymentMethod} • ${dateStr}</div>
+                            <div class="transaction-meta">${t.category} • ${t.paymentMethod}</div>
                         </div>
                         <div class="transaction-amount">$${t.amount.toFixed(2)}</div>
                     </div>
@@ -1207,7 +1339,7 @@
             currentTransactionId = null;
         }
 
-        function saveTransaction() {
+        async function saveTransaction() {
             // Get form values
             const description = document.getElementById('editDescription').value.trim();
             const amount = parseFloat(document.getElementById('editAmount').value);
@@ -1221,23 +1353,9 @@
                 return;
             }
 
-            if (currentTransactionId) {
-                // Edit existing transaction
-                const index = allTransactions.findIndex(t => t.id === currentTransactionId);
-                if (index !== -1) {
-                    allTransactions[index] = {
-                        ...allTransactions[index],
-                        description,
-                        amount,
-                        category,
-                        paymentMethod,
-                        date
-                    };
-                    showToast('Transaction updated');
-                }
-            } else {
-                // Add new transaction
-                const newTransaction = {
+            const transaction = currentTransactionId
+                ? { ...allTransactions.find(t => t.id === currentTransactionId), description, amount, category, paymentMethod, date }
+                : {
                     id: 'txn-' + Date.now(),
                     amount,
                     currency: 'USD',
@@ -1249,43 +1367,40 @@
                     status: 'confirmed',
                     createdAt: new Date().toISOString()
                 };
-                allTransactions.unshift(newTransaction);
-                showToast('Expense added');
+
+            const { error } = await sb.from('transactions').upsert(mapToSupabase(transaction));
+            if (error) {
+                console.error('Error saving transaction:', error);
+                showToast('Error saving transaction');
+                return;
             }
 
-            // Update localStorage
-            const data = { transactions: allTransactions };
-            localStorage.setItem('expenseData', JSON.stringify(data));
-
-            // Close modal and refresh display
+            showToast(currentTransactionId ? 'Transaction updated' : 'Expense added');
             closeModal();
-            updateDisplay();
+            loadData();
         }
 
-        function deleteCurrentTransaction() {
+        async function deleteCurrentTransaction() {
             if (!currentTransactionId) return;
 
             if (!confirm('Are you sure you want to delete this transaction?')) {
                 return;
             }
 
-            deleteTransactionById(currentTransactionId);
+            await deleteTransactionById(currentTransactionId);
             closeModal();
         }
 
-        function deleteTransactionById(id) {
-            // Remove from allTransactions array
-            allTransactions = allTransactions.filter(t => t.id !== id);
+        async function deleteTransactionById(id) {
+            const { error } = await sb.from('transactions').delete().eq('id', id);
+            if (error) {
+                console.error('Error deleting transaction:', error);
+                showToast('Error deleting transaction');
+                return;
+            }
 
-            // Update localStorage
-            const data = { transactions: allTransactions };
-            localStorage.setItem('expenseData', JSON.stringify(data));
-
-            // Refresh display
-            updateDisplay();
-
-            // Show confirmation
-            showToast('Transaction deleted successfully');
+            showToast('Transaction deleted');
+            loadData();
         }
 
         function showAddExpense() {
@@ -1325,7 +1440,7 @@
         function showToast(message) {
             // Simple toast notification (you can enhance this)
             const toast = document.createElement('div');
-            toast.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 8px; z-index: 3000; font-size: 14px;';
+            toast.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #26263A; color: #F0F0F5; padding: 12px 24px; border-radius: 8px; z-index: 3000; font-size: 14px; border: 1px solid #2E2E42;';
             toast.textContent = message;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
@@ -1371,10 +1486,10 @@
             }
         }, 30000);
 
-        // Auto-refresh data from server every 60s
+        // Fallback polling in case real-time subscription drops
         setInterval(() => {
             loadData();
-        }, 60000);
+        }, 300000);
 
         function escapeHtml(text) {
             const div = document.createElement('div');
