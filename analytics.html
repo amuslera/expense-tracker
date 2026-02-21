@@ -142,6 +142,138 @@
             font-weight: 600;
         }
 
+        /* Period Filter */
+        .period-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .period-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 10px 16px;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .period-btn:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .period-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        /* Custom Date Picker Modal */
+        .date-picker-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .date-picker-modal.active {
+            display: flex;
+        }
+
+        .date-picker-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+        }
+
+        .date-picker-content h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+
+        .date-input-group {
+            margin-bottom: 16px;
+        }
+
+        .date-input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .date-input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #1e293b;
+        }
+
+        .date-picker-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .date-picker-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .date-picker-actions .btn-cancel {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .date-picker-actions .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .date-picker-actions .btn-apply {
+            background: #2563eb;
+            color: white;
+        }
+
+        .date-picker-actions .btn-apply:hover {
+            background: #1d4ed8;
+        }
+
         @media (max-width: 640px) {
             body {
                 padding: 12px;
@@ -159,6 +291,15 @@
 <body>
     <div class="container">
         <h1>Analytics</h1>
+
+        <!-- Period Filter -->
+        <div class="period-filter">
+            <button class="period-btn" onclick="setPeriod('week')">This Week</button>
+            <button class="period-btn" onclick="setPeriod('month')">This Month</button>
+            <button class="period-btn" onclick="setPeriod('year')">This Year</button>
+            <button class="period-btn active" onclick="setPeriod('all')">All Time</button>
+            <button class="period-btn" onclick="openCustomDatePicker()">Custom</button>
+        </div>
 
         <!-- Summary Stats -->
         <div class="card">
@@ -208,6 +349,25 @@
         </div>
     </div>
 
+    <!-- Custom Date Picker Modal -->
+    <div id="datePickerModal" class="date-picker-modal">
+        <div class="date-picker-content">
+            <h2>Custom Date Range</h2>
+            <div class="date-input-group">
+                <label for="customStartDate">From</label>
+                <input type="date" id="customStartDate">
+            </div>
+            <div class="date-input-group">
+                <label for="customEndDate">To</label>
+                <input type="date" id="customEndDate">
+            </div>
+            <div class="date-picker-actions">
+                <button class="btn-cancel" onclick="closeDatePicker()">Cancel</button>
+                <button class="btn-apply" onclick="applyCustomDate()">Apply</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
         <div class="bottom-nav-wrapper">
@@ -251,6 +411,90 @@
         };
 
         let allTransactions = [];
+        let filteredTransactions = [];
+        let currentPeriod = 'all';
+        let customStartDate = null;
+        let customEndDate = null;
+
+        // Period management
+        function setPeriod(period) {
+            currentPeriod = period;
+
+            // Update button states
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            filterTransactionsByPeriod();
+            updateAnalytics();
+        }
+
+        function openCustomDatePicker() {
+            document.getElementById('datePickerModal').classList.add('active');
+        }
+
+        function closeDatePicker() {
+            document.getElementById('datePickerModal').classList.remove('active');
+        }
+
+        function applyCustomDate() {
+            const startDate = document.getElementById('customStartDate').value;
+            const endDate = document.getElementById('customEndDate').value;
+
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+
+            customStartDate = new Date(startDate);
+            customEndDate = new Date(endDate);
+            customEndDate.setHours(23, 59, 59, 999);
+
+            currentPeriod = 'custom';
+
+            // Update button states
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.period-btn')[4].classList.add('active');
+
+            closeDatePicker();
+            filterTransactionsByPeriod();
+            updateAnalytics();
+        }
+
+        function filterTransactionsByPeriod() {
+            const now = new Date();
+            let startDate;
+
+            switch (currentPeriod) {
+                case 'week':
+                    startDate = new Date(now);
+                    startDate.setDate(now.getDate() - 7);
+                    break;
+                case 'month':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                    break;
+                case 'year':
+                    startDate = new Date(now.getFullYear(), 0, 1);
+                    break;
+                case 'custom':
+                    startDate = customStartDate;
+                    break;
+                case 'all':
+                default:
+                    filteredTransactions = [...allTransactions];
+                    return;
+            }
+
+            const endDate = currentPeriod === 'custom' ? customEndDate : now;
+
+            filteredTransactions = allTransactions.filter(t => {
+                const transactionDate = new Date(t.date);
+                return transactionDate >= startDate && transactionDate <= endDate;
+            });
+        }
 
         // Load data
         function loadData() {
@@ -261,6 +505,7 @@
                     allTransactions = (data.transactions || []).sort((a, b) =>
                         new Date(b.date) - new Date(a.date)
                     );
+                    filterTransactionsByPeriod();
                     updateAnalytics();
                 })
                 .catch(err => {
@@ -271,6 +516,7 @@
                         allTransactions = (data.transactions || []).sort((a, b) =>
                             new Date(b.date) - new Date(a.date)
                         );
+                        filterTransactionsByPeriod();
                         updateAnalytics();
                     }
                 });
@@ -286,13 +532,14 @@
         }
 
         function updateStats() {
-            if (allTransactions.length === 0) return;
+            const transactions = filteredTransactions.length > 0 ? filteredTransactions : allTransactions;
+            if (transactions.length === 0) return;
 
-            const total = allTransactions.reduce((sum, t) => sum + t.amount, 0);
-            const avgTransaction = total / allTransactions.length;
+            const total = transactions.reduce((sum, t) => sum + t.amount, 0);
+            const avgTransaction = total / transactions.length;
 
             // Calculate days spanned
-            const dates = allTransactions.map(t => new Date(t.date));
+            const dates = transactions.map(t => new Date(t.date));
             const minDate = new Date(Math.min(...dates));
             const maxDate = new Date(Math.max(...dates));
             const daysDiff = Math.max(1, Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24)));
@@ -300,7 +547,7 @@
 
             // Top category
             const categoryTotals = {};
-            allTransactions.forEach(t => {
+            transactions.forEach(t => {
                 categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
             });
             const topCategory = Object.keys(categoryTotals).reduce((a, b) =>
@@ -310,65 +557,124 @@
             document.getElementById('avgDaily').textContent = '$' + avgDaily.toFixed(0);
             document.getElementById('avgTransaction').textContent = '$' + avgTransaction.toFixed(0);
             document.getElementById('topCategory').textContent = topCategory.split(' ')[0];
-            document.getElementById('totalTransactions').textContent = allTransactions.length;
+            document.getElementById('totalTransactions').textContent = transactions.length;
         }
 
+        let trendsChartInstance = null;
+
         function createTrendsChart() {
+            const transactions = filteredTransactions.length > 0 ? filteredTransactions : allTransactions;
+
             // Get last 6 months of data
             const now = new Date();
             const monthlyData = {};
+            const monthlyCategories = {};
 
+            // Initialize months
             for (let i = 5; i >= 0; i--) {
                 const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
                 const key = month.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
                 monthlyData[key] = 0;
+                monthlyCategories[key] = {};
             }
 
-            allTransactions.forEach(t => {
+            // Aggregate data by month and category
+            transactions.forEach(t => {
                 const date = new Date(t.date);
                 const key = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
                 if (monthlyData.hasOwnProperty(key)) {
                     monthlyData[key] += t.amount;
+                    if (!monthlyCategories[key][t.category]) {
+                        monthlyCategories[key][t.category] = 0;
+                    }
+                    monthlyCategories[key][t.category] += t.amount;
                 }
             });
 
-            const ctx = document.getElementById('trendsChart');
-            new Chart(ctx, {
+            // Get all unique categories
+            const allCategories = [...new Set(transactions.map(t => t.category))];
+
+            // Create datasets for each category (grouped bars, not stacked)
+            const datasets = allCategories.map(category => ({
+                label: category,
+                data: Object.keys(monthlyData).map(month => monthlyCategories[month][category] || 0),
+                backgroundColor: CATEGORY_CONFIG[category]?.color || '#cbd5e1',
+                borderRadius: 4,
+                borderSkipped: false,
+                type: 'bar',
+                barPercentage: 0.8,
+                categoryPercentage: 0.9
+            }));
+
+            // Add total line on top
+            datasets.push({
+                label: 'Total Spending',
+                data: Object.values(monthlyData),
+                borderColor: '#2563eb',
+                backgroundColor: 'transparent',
+                borderWidth: 3,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#2563eb',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointHoverRadius: 7,
                 type: 'line',
+                order: 0,
+                yAxisID: 'y'
+            }));
+
+            const ctx = document.getElementById('trendsChart');
+
+            // Destroy existing chart if it exists
+            if (trendsChartInstance) {
+                trendsChartInstance.destroy();
+            }
+
+            trendsChartInstance = new Chart(ctx, {
+                type: 'bar',
                 data: {
                     labels: Object.keys(monthlyData),
-                    datasets: [{
-                        label: 'Total Spending',
-                        data: Object.values(monthlyData),
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 5,
-                        pointBackgroundColor: '#2563eb',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointHoverRadius: 7
-                    }]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
                     plugins: {
-                        legend: { display: false },
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                padding: 12,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: { size: 11 },
+                                color: '#64748b',
+                                filter: (item) => item.text !== 'Total Spending'
+                            }
+                        },
                         tooltip: {
                             backgroundColor: 'rgba(30, 41, 59, 0.95)',
                             padding: 12,
                             cornerRadius: 8,
                             callbacks: {
-                                label: (context) => 'Total: $' + context.parsed.y.toFixed(2)
+                                label: (context) => {
+                                    if (context.dataset.type === 'line') {
+                                        return 'Total: $' + context.parsed.y.toFixed(2);
+                                    }
+                                    return context.dataset.label + ': $' + context.parsed.y.toFixed(2);
+                                }
                             }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
+                            stacked: false,
                             ticks: {
                                 callback: (value) => '$' + value.toFixed(0),
                                 color: '#64748b'
@@ -376,6 +682,7 @@
                             grid: { color: '#f1f5f9' }
                         },
                         x: {
+                            stacked: false,
                             ticks: { color: '#64748b' },
                             grid: { display: false }
                         }
@@ -384,9 +691,12 @@
             });
         }
 
+        let categoryChartInstance = null;
+
         function createCategoryChart() {
+            const transactions = filteredTransactions.length > 0 ? filteredTransactions : allTransactions;
             const categoryTotals = {};
-            allTransactions.forEach(t => {
+            transactions.forEach(t => {
                 categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
             });
 
@@ -397,7 +707,13 @@
             const colors = categories.map(cat => CATEGORY_CONFIG[cat]?.color || '#cbd5e1');
 
             const ctx = document.getElementById('categoryChart');
-            new Chart(ctx, {
+
+            // Destroy existing chart if it exists
+            if (categoryChartInstance) {
+                categoryChartInstance.destroy();
+            }
+
+            categoryChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: categories,
@@ -441,9 +757,12 @@
             });
         }
 
+        let paymentChartInstance = null;
+
         function createPaymentChart() {
+            const transactions = filteredTransactions.length > 0 ? filteredTransactions : allTransactions;
             const paymentTotals = {};
-            allTransactions.forEach(t => {
+            transactions.forEach(t => {
                 paymentTotals[t.paymentMethod] = (paymentTotals[t.paymentMethod] || 0) + t.amount;
             });
 
@@ -452,7 +771,13 @@
             const colors = ['#93c5fd', '#fcd34d', '#86efac', '#f9a8d4'];
 
             const ctx = document.getElementById('paymentChart');
-            new Chart(ctx, {
+
+            // Destroy existing chart if it exists
+            if (paymentChartInstance) {
+                paymentChartInstance.destroy();
+            }
+
+            paymentChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: methods,
