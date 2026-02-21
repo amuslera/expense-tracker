@@ -47,6 +47,18 @@
       "source": "whatsapp-text",
       "status": "confirmed",
       "createdAt": "2026-02-21T03:24:07.000Z"
+    },
+    {
+      "id": "txn-1740112912000",
+      "amount": 12.00,
+      "currency": "USD",
+      "category": "Food & Dining",
+      "description": "Dinner",
+      "paymentMethod": "Card",
+      "date": "2026-02-21T05:01:52.000Z",
+      "source": "whatsapp-text",
+      "status": "confirmed",
+      "createdAt": "2026-02-21T05:01:52.000Z"
     }
   ],
   "categories": [
