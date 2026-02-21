@@ -119,9 +119,39 @@
             border-bottom: 1px solid #f1f5f9;
             min-height: 80px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.3s;
             border-radius: 8px;
             margin-bottom: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .transaction-container {
+            position: relative;
+        }
+
+        .transaction-swipe-actions {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: #dc2626;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .transaction.swiping {
+            transition: transform 0.1s;
+        }
+
+        .transaction.show-delete .transaction-swipe-actions {
+            opacity: 1;
         }
 
         .transaction:last-child {
@@ -344,6 +374,64 @@
             transform: scale(0.98);
         }
 
+        /* Edit Form */
+        .edit-form {
+            display: none;
+        }
+
+        .edit-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #1e293b;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
         /* Floating Action Button */
         .fab {
             position: fixed;
@@ -388,11 +476,16 @@
             right: 0;
             background: white;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+            z-index: 1500;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .bottom-nav-wrapper {
+            max-width: 640px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-around;
             padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-            z-index: 1500;
-            border-top: 1px solid #f1f5f9;
         }
 
         .nav-item {
@@ -545,28 +638,30 @@
 
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
-        <a href="index.html" class="nav-item active">
-            <svg viewBox="0 0 24 24">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-            <span>Dashboard</span>
-        </a>
-        <a href="#analytics" class="nav-item" onclick="showPlaceholder('Analytics'); return false;">
-            <svg viewBox="0 0 24 24">
-                <line x1="12" y1="20" x2="12" y2="10"></line>
-                <line x1="18" y1="20" x2="18" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="16"></line>
-            </svg>
-            <span>Analytics</span>
-        </a>
-        <a href="#settings" class="nav-item" onclick="showPlaceholder('Settings'); return false;">
-            <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M12 1v6m0 6v6m8.66-15.66l-4.24 4.24m-8.49 8.49l-4.24 4.24M23 12h-6M7 12H1m20.66 8.66l-4.24-4.24m-8.49-8.49l-4.24-4.24"></path>
-            </svg>
-            <span>Settings</span>
-        </a>
+        <div class="bottom-nav-wrapper">
+            <a href="index.html" class="nav-item active">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="analytics.html" class="nav-item">
+                <svg viewBox="0 0 24 24">
+                    <line x1="12" y1="20" x2="12" y2="10"></line>
+                    <line x1="18" y1="20" x2="18" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="16"></line>
+                </svg>
+                <span>Analytics</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 1v6m0 6v6m8.66-15.66l-4.24 4.24m-8.49 8.49l-4.24 4.24M23 12h-6M7 12H1m20.66 8.66l-4.24-4.24m-8.49-8.49l-4.24-4.24"></path>
+                </svg>
+                <span>Settings</span>
+            </a>
+        </div>
     </div>
 
     <!-- Transaction Detail Modal -->
@@ -582,35 +677,81 @@
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="modal-amount" id="modalAmount"></div>
-                <div class="modal-detail-row">
-                    <div class="modal-detail-label">Date</div>
-                    <div class="modal-detail-value" id="modalDate"></div>
+                <!-- Detail View -->
+                <div id="detailView">
+                    <div class="modal-amount" id="modalAmount"></div>
+                    <div class="modal-detail-row">
+                        <div class="modal-detail-label">Date</div>
+                        <div class="modal-detail-value" id="modalDate"></div>
+                    </div>
+                    <div class="modal-detail-row">
+                        <div class="modal-detail-label">Payment Method</div>
+                        <div class="modal-detail-value" id="modalPayment"></div>
+                    </div>
+                    <div class="modal-detail-row">
+                        <div class="modal-detail-label">Category</div>
+                        <div class="modal-detail-value" id="modalCategoryValue"></div>
+                    </div>
                 </div>
-                <div class="modal-detail-row">
-                    <div class="modal-detail-label">Payment Method</div>
-                    <div class="modal-detail-value" id="modalPayment"></div>
-                </div>
-                <div class="modal-detail-row">
-                    <div class="modal-detail-label">Category</div>
-                    <div class="modal-detail-value" id="modalCategoryValue"></div>
+
+                <!-- Edit Form -->
+                <div id="editForm" class="edit-form">
+                    <div class="form-group">
+                        <label class="form-label" for="editDescription">Description</label>
+                        <input type="text" id="editDescription" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editAmount">Amount</label>
+                        <input type="number" id="editAmount" class="form-input" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editCategory">Category</label>
+                        <select id="editCategory" class="form-select" required>
+                            <option value="Food & Dining">Food & Dining</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Bills & Utilities">Bills & Utilities</option>
+                            <option value="Health">Health</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editPaymentMethod">Payment Method</label>
+                        <select id="editPaymentMethod" class="form-select" required>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Digital Wallet">Digital Wallet</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editDate">Date</label>
+                        <input type="date" id="editDate" class="form-input" required>
+                    </div>
                 </div>
             </div>
             <div class="modal-actions">
-                <button class="btn btn-edit" onclick="editTransaction()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                    </svg>
-                    Edit
-                </button>
-                <button class="btn btn-delete" onclick="deleteCurrentTransaction()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                    Delete
-                </button>
+                <div id="detailActions">
+                    <button class="btn btn-edit" onclick="showEditForm()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Edit
+                    </button>
+                    <button class="btn btn-delete" onclick="deleteCurrentTransaction()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Delete
+                    </button>
+                </div>
+                <div id="editActions" class="edit-form">
+                    <button class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveTransaction()">Save Changes</button>
+                </div>
             </div>
         </div>
     </div>
@@ -878,15 +1019,76 @@
                 });
                 const config = CATEGORY_CONFIG[t.category] || CATEGORY_CONFIG['Other'];
 
-                return `<div class="transaction" onclick="showTransactionDetail('${t.id}')">
-                    <div class="transaction-icon ${config.class}">${config.icon}</div>
-                    <div class="transaction-details">
-                        <div class="transaction-title">${escapeHtml(t.description)}</div>
-                        <div class="transaction-meta">${t.category} • ${t.paymentMethod} • ${dateStr}</div>
+                return `<div class="transaction-container">
+                    <div class="transaction-swipe-actions">Delete</div>
+                    <div class="transaction" data-id="${t.id}" onclick="showTransactionDetail('${t.id}')">
+                        <div class="transaction-icon ${config.class}">${config.icon}</div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">${escapeHtml(t.description)}</div>
+                            <div class="transaction-meta">${t.category} • ${t.paymentMethod} • ${dateStr}</div>
+                        </div>
+                        <div class="transaction-amount">$${t.amount.toFixed(2)}</div>
                     </div>
-                    <div class="transaction-amount">$${t.amount.toFixed(2)}</div>
                 </div>`;
             }).join('');
+
+            // Add swipe handlers to all transactions
+            initSwipeHandlers();
+        }
+
+        function initSwipeHandlers() {
+            const transactions = document.querySelectorAll('.transaction');
+
+            transactions.forEach(transaction => {
+                let startX = 0;
+                let currentX = 0;
+                let isDragging = false;
+
+                transaction.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    isDragging = true;
+                    transaction.classList.add('swiping');
+                });
+
+                transaction.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+
+                    currentX = e.touches[0].clientX;
+                    const diff = startX - currentX;
+
+                    if (diff > 0) {
+                        transaction.style.transform = `translateX(-${Math.min(diff, 100)}px)`;
+                    }
+                });
+
+                transaction.addEventListener('touchend', (e) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    transaction.classList.remove('swiping');
+
+                    const diff = startX - currentX;
+
+                    if (diff > 80) {
+                        // Show delete
+                        transaction.style.transform = 'translateX(-100px)';
+                        transaction.closest('.transaction-container').classList.add('show-delete');
+
+                        // Delete after a moment
+                        setTimeout(() => {
+                            const id = transaction.dataset.id;
+                            if (confirm('Delete this transaction?')) {
+                                deleteTransactionById(id);
+                            } else {
+                                transaction.style.transform = 'translateX(0)';
+                                transaction.closest('.transaction-container').classList.remove('show-delete');
+                            }
+                        }, 300);
+                    } else {
+                        // Snap back
+                        transaction.style.transform = 'translateX(0)';
+                    }
+                });
+            });
         }
 
         function showTransactionDetail(id) {
@@ -918,11 +1120,78 @@
         function closeModal() {
             document.getElementById('transactionModal').classList.remove('active');
             currentTransactionId = null;
+            // Reset to detail view
+            document.getElementById('detailView').style.display = 'block';
+            document.getElementById('editForm').classList.remove('active');
+            document.getElementById('detailActions').style.display = 'flex';
+            document.getElementById('editActions').classList.remove('active');
         }
 
-        function editTransaction() {
-            alert('Edit functionality coming soon!');
-            // Placeholder for future edit functionality
+        function showEditForm() {
+            const transaction = allTransactions.find(t => t.id === currentTransactionId);
+            if (!transaction) return;
+
+            // Populate form
+            document.getElementById('editDescription').value = transaction.description;
+            document.getElementById('editAmount').value = transaction.amount;
+            document.getElementById('editCategory').value = transaction.category;
+            document.getElementById('editPaymentMethod').value = transaction.paymentMethod;
+            document.getElementById('editDate').value = transaction.date;
+
+            // Show edit form, hide detail view
+            document.getElementById('detailView').style.display = 'none';
+            document.getElementById('editForm').classList.add('active');
+            document.getElementById('detailActions').style.display = 'none';
+            document.getElementById('editActions').classList.add('active');
+        }
+
+        function cancelEdit() {
+            // Show detail view, hide edit form
+            document.getElementById('detailView').style.display = 'block';
+            document.getElementById('editForm').classList.remove('active');
+            document.getElementById('detailActions').style.display = 'flex';
+            document.getElementById('editActions').classList.remove('active');
+        }
+
+        function saveTransaction() {
+            if (!currentTransactionId) return;
+
+            // Get form values
+            const description = document.getElementById('editDescription').value.trim();
+            const amount = parseFloat(document.getElementById('editAmount').value);
+            const category = document.getElementById('editCategory').value;
+            const paymentMethod = document.getElementById('editPaymentMethod').value;
+            const date = document.getElementById('editDate').value;
+
+            // Validate
+            if (!description || !amount || amount <= 0 || !category || !paymentMethod || !date) {
+                alert('Please fill in all fields correctly');
+                return;
+            }
+
+            // Update transaction
+            const index = allTransactions.findIndex(t => t.id === currentTransactionId);
+            if (index !== -1) {
+                allTransactions[index] = {
+                    ...allTransactions[index],
+                    description,
+                    amount,
+                    category,
+                    paymentMethod,
+                    date
+                };
+
+                // Update localStorage
+                const data = { transactions: allTransactions };
+                localStorage.setItem('expenseData', JSON.stringify(data));
+
+                // Close modal and refresh display
+                closeModal();
+                updateDisplay();
+
+                // Show confirmation
+                showToast('Transaction updated successfully');
+            }
         }
 
         function deleteCurrentTransaction() {
@@ -932,15 +1201,19 @@
                 return;
             }
 
+            deleteTransactionById(currentTransactionId);
+            closeModal();
+        }
+
+        function deleteTransactionById(id) {
             // Remove from allTransactions array
-            allTransactions = allTransactions.filter(t => t.id !== currentTransactionId);
+            allTransactions = allTransactions.filter(t => t.id !== id);
 
             // Update localStorage
             const data = { transactions: allTransactions };
             localStorage.setItem('expenseData', JSON.stringify(data));
 
-            // Close modal and refresh display
-            closeModal();
+            // Refresh display
             updateDisplay();
 
             // Show confirmation

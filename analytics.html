@@ -3,113 +3,502 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Spentzy - Analytics and insights">
-    <title>Analytics - Spentzy</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/auth.css">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Analytics - Expense Tracker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e293b;
+            font-size: 28px;
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            margin: 16px 0;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+            z-index: 1500;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .bottom-nav-wrapper {
+            max-width: 640px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #94a3b8;
+            transition: all 0.2s;
+            min-height: 64px;
+            justify-content: center;
+            border-radius: 8px;
+            max-width: 120px;
+        }
+
+        .nav-item:hover {
+            background: #f8fafc;
+            color: #64748b;
+        }
+
+        .nav-item.active {
+            color: #2563eb;
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+                padding-bottom: 88px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <h1 class="header__title">ANALYTICS</h1>
-        </header>
+        <h1>Analytics</h1>
 
-        <!-- Weekly Spending Trend -->
-        <section class="chart-section">
-            <h2 class="section-title">Weekly Spending Trend</h2>
+        <!-- Summary Stats -->
+        <div class="card">
+            <h3>Quick Stats</h3>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="avgDaily">$0</div>
+                    <div class="stat-label">Avg Daily</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgTransaction">$0</div>
+                    <div class="stat-label">Avg Transaction</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="topCategory">-</div>
+                    <div class="stat-label">Top Category</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalTransactions">0</div>
+                    <div class="stat-label">Transactions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Trends -->
+        <div class="card">
+            <h3>Spending Trend (Last 6 Months)</h3>
             <div class="chart-container">
-                <canvas id="weeklyTrendChart" data-chart="weekly-trend"></canvas>
+                <canvas id="trendsChart"></canvas>
             </div>
-        </section>
+        </div>
 
-        <!-- Category Breakdown -->
-        <section class="chart-section">
-            <h2 class="section-title">Category Breakdown</h2>
+        <!-- Category Comparison -->
+        <div class="card">
+            <h3>Category Comparison</h3>
             <div class="chart-container">
-                <canvas id="categoryChart" data-chart="category-breakdown"></canvas>
+                <canvas id="categoryChart"></canvas>
             </div>
-        </section>
+        </div>
 
-        <!-- Monthly Comparison -->
-        <section class="chart-section">
-            <h2 class="section-title">Monthly Comparison</h2>
+        <!-- Payment Method Breakdown -->
+        <div class="card">
+            <h3>Payment Methods</h3>
             <div class="chart-container">
-                <canvas id="monthlyChart" data-chart="monthly-comparison"></canvas>
+                <canvas id="paymentChart"></canvas>
             </div>
-        </section>
-
-        <!-- Summary Statistics -->
-        <section class="statistics">
-            <h2 class="section-title">Summary Statistics</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3 class="stat-card__label">Average Daily Spend</h3>
-                    <p class="stat-card__value" data-stat="avg-daily"></p>
-                </div>
-
-                <div class="stat-card">
-                    <h3 class="stat-card__label">Most Expensive Day</h3>
-                    <p class="stat-card__value" data-stat="max-day"></p>
-                    <p class="stat-card__meta" data-stat="max-day-date"></p>
-                </div>
-
-                <div class="stat-card">
-                    <h3 class="stat-card__label">Top Category</h3>
-                    <p class="stat-card__value" data-stat="top-category"></p>
-                    <p class="stat-card__meta" data-stat="top-category-amount"></p>
-                </div>
-
-                <div class="stat-card">
-                    <h3 class="stat-card__label">Total Transactions</h3>
-                    <p class="stat-card__value" data-stat="total-transactions"></p>
-                </div>
-
-                <div class="stat-card">
-                    <h3 class="stat-card__label">This Week vs Last Week</h3>
-                    <p class="stat-card__value" data-stat="week-comparison"></p>
-                    <p class="stat-card__meta" data-stat="week-comparison-amount"></p>
-                </div>
-
-                <div class="stat-card">
-                    <h3 class="stat-card__label">Spending Streak</h3>
-                    <p class="stat-card__value" data-stat="streak"></p>
-                    <p class="stat-card__meta">consecutive days</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="index.html" class="bottom-nav__item">
-                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <span class="bottom-nav__label">This Week</span>
-            </a>
-            <a href="expenses.html" class="bottom-nav__item">
-                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2"/>
-                    <path d="M9 7h6M9 12h6M9 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <span class="bottom-nav__label">Expenses</span>
-            </a>
-            <a href="analytics.html" class="bottom-nav__item bottom-nav__item--active" aria-current="page">
-                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 3v18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M7 16l4-4 4 4 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span class="bottom-nav__label">Analytics</span>
-            </a>
-        </nav>
+        </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="js/auth.js"></script>
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="bottom-nav-wrapper">
+            <a href="index.html" class="nav-item">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="analytics.html" class="nav-item active">
+                <svg viewBox="0 0 24 24">
+                    <line x1="12" y1="20" x2="12" y2="10"></line>
+                    <line x1="18" y1="20" x2="18" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="16"></line>
+                </svg>
+                <span>Analytics</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 1v6m0 6v6m8.66-15.66l-4.24 4.24m-8.49 8.49l-4.24 4.24M23 12h-6M7 12H1m20.66 8.66l-4.24-4.24m-8.49-8.49l-4.24-4.24"></path>
+                </svg>
+                <span>Settings</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/charts.js"></script>
-    <script src="js/analytics.js"></script>
+
+    <script>
+        const CATEGORY_CONFIG = {
+            'Food & Dining': { color: '#86efac' },
+            'Transportation': { color: '#93c5fd' },
+            'Shopping': { color: '#fcd34d' },
+            'Entertainment': { color: '#f9a8d4' },
+            'Bills & Utilities': { color: '#c4b5fd' },
+            'Health': { color: '#fca5a5' },
+            'Other': { color: '#cbd5e1' }
+        };
+
+        let allTransactions = [];
+
+        // Load data
+        function loadData() {
+            fetch('data/expenses.json?t=' + Date.now())
+                .then(r => r.json())
+                .then(data => {
+                    localStorage.setItem('expenseData', JSON.stringify(data));
+                    allTransactions = (data.transactions || []).sort((a, b) =>
+                        new Date(b.date) - new Date(a.date)
+                    );
+                    updateAnalytics();
+                })
+                .catch(err => {
+                    console.error('Error loading data:', err);
+                    const stored = localStorage.getItem('expenseData');
+                    if (stored) {
+                        const data = JSON.parse(stored);
+                        allTransactions = (data.transactions || []).sort((a, b) =>
+                            new Date(b.date) - new Date(a.date)
+                        );
+                        updateAnalytics();
+                    }
+                });
+        }
+
+        loadData();
+
+        function updateAnalytics() {
+            updateStats();
+            createTrendsChart();
+            createCategoryChart();
+            createPaymentChart();
+        }
+
+        function updateStats() {
+            if (allTransactions.length === 0) return;
+
+            const total = allTransactions.reduce((sum, t) => sum + t.amount, 0);
+            const avgTransaction = total / allTransactions.length;
+
+            // Calculate days spanned
+            const dates = allTransactions.map(t => new Date(t.date));
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date(Math.max(...dates));
+            const daysDiff = Math.max(1, Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24)));
+            const avgDaily = total / daysDiff;
+
+            // Top category
+            const categoryTotals = {};
+            allTransactions.forEach(t => {
+                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
+            });
+            const topCategory = Object.keys(categoryTotals).reduce((a, b) =>
+                categoryTotals[a] > categoryTotals[b] ? a : b, 'None'
+            );
+
+            document.getElementById('avgDaily').textContent = '$' + avgDaily.toFixed(0);
+            document.getElementById('avgTransaction').textContent = '$' + avgTransaction.toFixed(0);
+            document.getElementById('topCategory').textContent = topCategory.split(' ')[0];
+            document.getElementById('totalTransactions').textContent = allTransactions.length;
+        }
+
+        function createTrendsChart() {
+            // Get last 6 months of data
+            const now = new Date();
+            const monthlyData = {};
+
+            for (let i = 5; i >= 0; i--) {
+                const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const key = month.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                monthlyData[key] = 0;
+            }
+
+            allTransactions.forEach(t => {
+                const date = new Date(t.date);
+                const key = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                if (monthlyData.hasOwnProperty(key)) {
+                    monthlyData[key] += t.amount;
+                }
+            });
+
+            const ctx = document.getElementById('trendsChart');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(monthlyData),
+                    datasets: [{
+                        label: 'Total Spending',
+                        data: Object.values(monthlyData),
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#2563eb',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: (context) => 'Total: $' + context.parsed.y.toFixed(2)
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: (value) => '$' + value.toFixed(0),
+                                color: '#64748b'
+                            },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            ticks: { color: '#64748b' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createCategoryChart() {
+            const categoryTotals = {};
+            allTransactions.forEach(t => {
+                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
+            });
+
+            const categories = Object.keys(categoryTotals).sort((a, b) =>
+                categoryTotals[b] - categoryTotals[a]
+            );
+            const amounts = categories.map(cat => categoryTotals[cat]);
+            const colors = categories.map(cat => CATEGORY_CONFIG[cat]?.color || '#cbd5e1');
+
+            const ctx = document.getElementById('categoryChart');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        label: 'Amount',
+                        data: amounts,
+                        backgroundColor: colors,
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: (context) => '$' + context.parsed.y.toFixed(2)
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: (value) => '$' + value.toFixed(0),
+                                color: '#64748b'
+                            },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            ticks: { color: '#64748b' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPaymentChart() {
+            const paymentTotals = {};
+            allTransactions.forEach(t => {
+                paymentTotals[t.paymentMethod] = (paymentTotals[t.paymentMethod] || 0) + t.amount;
+            });
+
+            const methods = Object.keys(paymentTotals);
+            const amounts = methods.map(method => paymentTotals[method]);
+            const colors = ['#93c5fd', '#fcd34d', '#86efac', '#f9a8d4'];
+
+            const ctx = document.getElementById('paymentChart');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: methods,
+                    datasets: [{
+                        data: amounts,
+                        backgroundColor: colors,
+                        borderColor: '#fff',
+                        borderWidth: 3,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: { size: 12 },
+                                color: '#64748b'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: (context) => {
+                                    const total = amounts.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return [
+                                        context.label,
+                                        `Amount: $${context.parsed.toFixed(2)}`,
+                                        `Percentage: ${percentage}%`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>
