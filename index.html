@@ -637,26 +637,12 @@
 
         // Load and display data
         function loadData() {
-            // Try localStorage first
-            const stored = localStorage.getItem('expenseData');
-            if (stored) {
-                try {
-                    const data = JSON.parse(stored);
-                    allTransactions = (data.transactions || []).sort((a, b) =>
-                        new Date(b.date) - new Date(a.date)
-                    );
-                    updateDisplay();
-                    return;
-                } catch (e) {
-                    console.error('Error parsing localStorage:', e);
-                }
-            }
-
-            // Fall back to fetching from JSON file
-            fetch('data/expenses.json')
+            // Always fetch from server to get latest data from JJ Gasto
+            // LocalStorage is only used for offline fallback
+            fetch('data/expenses.json?t=' + Date.now())
                 .then(r => r.json())
                 .then(data => {
-                    // Seed localStorage on first visit
+                    // Update localStorage with latest data
                     localStorage.setItem('expenseData', JSON.stringify(data));
                     allTransactions = (data.transactions || []).sort((a, b) =>
                         new Date(b.date) - new Date(a.date)
@@ -664,9 +650,27 @@
                     updateDisplay();
                 })
                 .catch(err => {
-                    console.error('Error loading data:', err);
-                    document.getElementById('transactions').innerHTML =
-                        '<div class="empty-state"><p>Error loading data. Please refresh the page.</p></div>';
+                    console.error('Error loading data from server, trying localStorage...', err);
+                    // Fallback to localStorage if server fetch fails (offline mode)
+                    const stored = localStorage.getItem('expenseData');
+                    if (stored) {
+                        try {
+                            const data = JSON.parse(stored);
+                            allTransactions = (data.transactions || []).sort((a, b) =>
+                                new Date(b.date) - new Date(a.date)
+                            );
+                            updateDisplay();
+                            // Show warning that data might be stale
+                            showToast('Showing cached data - may be out of date');
+                        } catch (e) {
+                            console.error('Error parsing localStorage:', e);
+                            document.getElementById('transactions').innerHTML =
+                                '<div class="empty-state"><p>Error loading data. Please refresh the page.</p></div>';
+                        }
+                    } else {
+                        document.getElementById('transactions').innerHTML =
+                            '<div class="empty-state"><p>Error loading data. Please refresh the page.</p></div>';
+                    }
                 });
         }
 
