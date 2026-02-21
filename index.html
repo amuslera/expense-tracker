@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,7 @@
             background: #f5f5f5;
             min-height: 100vh;
             padding: 20px;
-            padding-bottom: 100px;
+            padding-bottom: 120px;
         }
 
         .container { max-width: 600px; margin: 0 auto; }
@@ -21,7 +21,49 @@
             text-align: center;
             color: #333;
             font-size: 32px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Period Filter */
+        .period-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .period-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 10px 16px;
+            background: #f5f5f5;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .period-btn:hover {
+            background: #e8e8e8;
+        }
+
+        .period-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
         }
 
         .card {
@@ -61,11 +103,20 @@
             font-size: 14px;
         }
 
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        /* Transaction List */
         .transaction {
             display: flex;
             align-items: center;
             padding: 16px 0;
             border-bottom: 1px solid #f0f0f0;
+            min-height: 80px;
         }
 
         .transaction:last-child { border-bottom: none; }
@@ -82,18 +133,28 @@
             flex-shrink: 0;
         }
 
-        .transaction-details { flex: 1; }
+        .transaction-details { flex: 1; min-width: 0; }
 
         .transaction-title {
             font-weight: 600;
             font-size: 16px;
             color: #333;
             margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .transaction-meta {
             font-size: 13px;
             color: #999;
+        }
+
+        .transaction-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
         }
 
         .transaction-amount {
@@ -102,54 +163,33 @@
             color: #333;
         }
 
-        .category-item {
-            display: flex;
-            align-items: center;
-            margin: 16px 0;
-        }
-
-        .category-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+        .delete-btn {
+            background: #fee;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 48px;
+            min-width: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            margin-right: 12px;
         }
 
-        .category-info { flex: 1; }
-
-        .category-name {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 4px;
+        .delete-btn:hover {
+            background: #fcc;
+            transform: scale(1.05);
         }
 
-        .category-amount {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .progress {
-            height: 8px;
-            background: #f0f0f0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .bar {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s ease;
+        .delete-btn:active {
+            transform: scale(0.95);
         }
 
         /* Floating Action Button */
         .fab {
             position: fixed;
-            bottom: 24px;
+            bottom: 84px;
             right: 24px;
             width: 64px;
             height: 64px;
@@ -181,6 +221,57 @@
             stroke-width: 3;
         }
 
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 999;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #999;
+            transition: all 0.2s;
+            min-height: 48px;
+            justify-content: center;
+        }
+
+        .nav-item:hover {
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
         /* Category Colors */
         .cat-food { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
         .cat-transport { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
@@ -190,11 +281,29 @@
         .cat-health { background: linear-gradient(135deg, #fdcbf1 0%, #e6dee9 100%); }
         .cat-other { background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); }
 
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            stroke: #ccc;
+            stroke-width: 2;
+            margin-bottom: 16px;
+        }
+
         @media (max-width: 640px) {
             body { padding: 12px; padding-bottom: 100px; }
             h1 { font-size: 24px; }
             .amount { font-size: 36px; }
             .card { padding: 20px; }
+            .period-filter { padding: 8px; gap: 6px; }
+            .period-btn { min-width: 70px; padding: 8px 12px; font-size: 13px; }
+            .fab { bottom: 74px; right: 16px; width: 56px; height: 56px; }
         }
     </style>
 </head>
@@ -202,29 +311,37 @@
     <div class="container">
         <h1>💰 Expense Tracker</h1>
 
-        <div class="card">
-            <h3>This Week</h3>
-            <div class="amount" id="weekAmount">$0.00</div>
-            <div class="subtitle" id="weekCount">0 transactions</div>
+        <!-- Period Filter -->
+        <div class="period-filter">
+            <button class="period-btn" data-period="week">This Week</button>
+            <button class="period-btn active" data-period="month">This Month</button>
+            <button class="period-btn" data-period="year">This Year</button>
+            <button class="period-btn" data-period="all">All Time</button>
         </div>
 
+        <!-- Summary Card -->
         <div class="card">
-            <h3>This Month</h3>
-            <div class="amount" id="monthAmount">$0.00</div>
-            <div class="subtitle" id="monthCount">0 transactions</div>
+            <h3 id="summaryTitle">This Month</h3>
+            <div class="amount" id="totalAmount">$0.00</div>
+            <div class="subtitle" id="totalCount">0 transactions</div>
         </div>
 
+        <!-- Category Breakdown with Donut Chart -->
         <div class="card">
             <h3>Spending by Category</h3>
-            <div id="categories"></div>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
         </div>
 
+        <!-- All Transactions -->
         <div class="card">
-            <h3>All Transactions</h3>
+            <h3>Transactions</h3>
             <div id="transactions"></div>
         </div>
     </div>
 
+    <!-- Floating Action Button -->
     <button class="fab" onclick="alert('Quick Add Expense - Coming Soon!')">
         <svg viewBox="0 0 24 24" fill="none">
             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -232,91 +349,323 @@
         </svg>
     </button>
 
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <svg viewBox="0 0 24 24">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Dashboard</span>
+        </a>
+        <a href="analytics.html" class="nav-item">
+            <svg viewBox="0 0 24 24">
+                <line x1="12" y1="20" x2="12" y2="10"></line>
+                <line x1="18" y1="20" x2="18" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="16"></line>
+            </svg>
+            <span>Analytics</span>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6m8.66-15.66l-4.24 4.24m-8.49 8.49l-4.24 4.24M23 12h-6M7 12H1m20.66 8.66l-4.24-4.24m-8.49-8.49l-4.24-4.24"></path>
+            </svg>
+            <span>Settings</span>
+        </a>
+    </div>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
     <script>
+        // Category Configuration
         const CATEGORY_CONFIG = {
-            'Food & Dining': { icon: '🍔', class: 'cat-food' },
-            'Transportation': { icon: '🚗', class: 'cat-transport' },
-            'Shopping': { icon: '🛍️', class: 'cat-shopping' },
-            'Entertainment': { icon: '🎬', class: 'cat-entertainment' },
-            'Bills & Utilities': { icon: '💡', class: 'cat-bills' },
-            'Health': { icon: '💊', class: 'cat-health' },
-            'Other': { icon: '📌', class: 'cat-other' }
+            'Food & Dining': { icon: '🍔', class: 'cat-food', color: '#84fab0' },
+            'Transportation': { icon: '🚗', class: 'cat-transport', color: '#a8edea' },
+            'Shopping': { icon: '🛍️', class: 'cat-shopping', color: '#ffecd2' },
+            'Entertainment': { icon: '🎬', class: 'cat-entertainment', color: '#ff9a9e' },
+            'Bills & Utilities': { icon: '💡', class: 'cat-bills', color: '#fbc2eb' },
+            'Health': { icon: '💊', class: 'cat-health', color: '#fdcbf1' },
+            'Other': { icon: '📌', class: 'cat-other', color: '#e0c3fc' }
         };
 
-        const CATEGORY_COLORS = {
-            'Food & Dining': '#84fab0',
-            'Transportation': '#a8edea',
-            'Shopping': '#ffecd2',
-            'Entertainment': '#ff9a9e',
-            'Bills & Utilities': '#fbc2eb',
-            'Health': '#fdcbf1',
-            'Other': '#e0c3fc'
-        };
+        let allTransactions = [];
+        let currentPeriod = 'month';
+        let categoryChart = null;
 
-        fetch('data/expenses.json')
-            .then(r => r.json())
-            .then(data => {
-                const txns = (data.transactions || []).sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Load and display data
+        function loadData() {
+            // Try localStorage first
+            const stored = localStorage.getItem('expenseData');
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    allTransactions = (data.transactions || []).sort((a, b) =>
+                        new Date(b.date) - new Date(a.date)
+                    );
+                    updateDisplay();
+                    return;
+                } catch (e) {
+                    console.error('Error parsing localStorage:', e);
+                }
+            }
 
-                const now = new Date();
-                const weekStart = new Date(now);
-                weekStart.setDate(now.getDate() - 7);
-                const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+            // Fall back to fetching from JSON file
+            fetch('data/expenses.json')
+                .then(r => r.json())
+                .then(data => {
+                    // Seed localStorage on first visit
+                    localStorage.setItem('expenseData', JSON.stringify(data));
+                    allTransactions = (data.transactions || []).sort((a, b) =>
+                        new Date(b.date) - new Date(a.date)
+                    );
+                    updateDisplay();
+                })
+                .catch(err => {
+                    document.body.innerHTML += '<div class="card"><strong>Error:</strong> ' + err.message + '</div>';
+                });
+        }
 
-                const weekTxns = txns.filter(t => new Date(t.date) >= weekStart);
-                const monthTxns = txns.filter(t => new Date(t.date) >= monthStart);
+        loadData();
 
-                const weekTotal = weekTxns.reduce((sum, t) => sum + t.amount, 0);
-                const monthTotal = monthTxns.reduce((sum, t) => sum + t.amount, 0);
-                const allTotal = txns.reduce((sum, t) => sum + t.amount, 0);
-
-                document.getElementById('weekAmount').textContent = '$' + weekTotal.toFixed(2);
-                document.getElementById('weekCount').textContent = weekTxns.length + ' transactions';
-                document.getElementById('monthAmount').textContent = '$' + monthTotal.toFixed(2);
-                document.getElementById('monthCount').textContent = monthTxns.length + ' transactions';
-
-                // Transactions with icons
-                document.getElementById('transactions').innerHTML = txns.map(t => {
-                    const date = new Date(t.date);
-                    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                    const config = CATEGORY_CONFIG[t.category] || CATEGORY_CONFIG['Other'];
-
-                    return `<div class="transaction">
-                        <div class="transaction-icon ${config.class}">${config.icon}</div>
-                        <div class="transaction-details">
-                            <div class="transaction-title">${t.description}</div>
-                            <div class="transaction-meta">${t.category} • ${t.paymentMethod} • ${dateStr}</div>
-                        </div>
-                        <div class="transaction-amount">$${t.amount.toFixed(2)}</div>
-                    </div>`;
-                }).join('');
-
-                // Categories with icons and colored progress bars
-                const cats = {};
-                txns.forEach(t => cats[t.category] = (cats[t.category] || 0) + t.amount);
-
-                document.getElementById('categories').innerHTML = Object.entries(cats)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([cat, amt]) => {
-                        const config = CATEGORY_CONFIG[cat] || CATEGORY_CONFIG['Other'];
-                        const color = CATEGORY_COLORS[cat] || CATEGORY_COLORS['Other'];
-                        const pct = (amt/allTotal*100).toFixed(0);
-
-                        return `<div class="category-item">
-                            <div class="category-icon ${config.class}">${config.icon}</div>
-                            <div class="category-info">
-                                <div class="category-name">${cat}</div>
-                                <div class="category-amount">$${amt.toFixed(2)} (${pct}%)</div>
-                                <div class="progress">
-                                    <div class="bar" style="width: ${pct}%; background: ${color};"></div>
-                                </div>
-                            </div>
-                        </div>`;
-                    }).join('');
-            })
-            .catch(err => {
-                document.body.innerHTML += '<div class="card"><strong>Error:</strong> ' + err.message + '</div>';
+        // Period filter handlers
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentPeriod = this.dataset.period;
+                updateDisplay();
             });
+        });
+
+        function updateDisplay() {
+            const filtered = filterTransactionsByPeriod(allTransactions, currentPeriod);
+            updateSummary(filtered);
+            updateCategoryChart(filtered);
+            updateTransactionList(filtered);
+        }
+
+        function filterTransactionsByPeriod(transactions, period) {
+            const now = new Date();
+
+            switch(period) {
+                case 'week':
+                    const weekStart = new Date(now);
+                    weekStart.setDate(now.getDate() - 7);
+                    return transactions.filter(t => new Date(t.date) >= weekStart);
+
+                case 'month':
+                    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+                    return transactions.filter(t => new Date(t.date) >= monthStart);
+
+                case 'year':
+                    const yearStart = new Date(now.getFullYear(), 0, 1);
+                    return transactions.filter(t => new Date(t.date) >= yearStart);
+
+                case 'all':
+                default:
+                    return transactions;
+            }
+        }
+
+        function updateSummary(transactions) {
+            const total = transactions.reduce((sum, t) => sum + t.amount, 0);
+            const count = transactions.length;
+
+            const titles = {
+                'week': 'This Week',
+                'month': 'This Month',
+                'year': 'This Year',
+                'all': 'All Time'
+            };
+
+            document.getElementById('summaryTitle').textContent = titles[currentPeriod];
+            document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
+            document.getElementById('totalCount').textContent = count + ' transaction' + (count !== 1 ? 's' : '');
+        }
+
+        function updateCategoryChart(transactions) {
+            // Calculate category totals
+            const categoryTotals = {};
+            transactions.forEach(t => {
+                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
+            });
+
+            const categories = Object.keys(categoryTotals).sort((a, b) =>
+                categoryTotals[b] - categoryTotals[a]
+            );
+            const amounts = categories.map(cat => categoryTotals[cat]);
+            const colors = categories.map(cat => CATEGORY_CONFIG[cat]?.color || CATEGORY_CONFIG['Other'].color);
+            const total = amounts.reduce((sum, val) => sum + val, 0);
+
+            // Destroy existing chart
+            if (categoryChart) {
+                categoryChart.destroy();
+            }
+
+            const ctx = document.getElementById('categoryChart');
+
+            if (categories.length === 0) {
+                ctx.parentElement.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><p>No transactions for this period</p></div>';
+                return;
+            }
+
+            categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: amounts,
+                        backgroundColor: colors,
+                        borderColor: '#fff',
+                        borderWidth: 3,
+                        hoverOffset: 10,
+                        hoverBorderColor: '#fff',
+                        hoverBorderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                font: { size: 12 },
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    if (data.labels.length && data.datasets.length) {
+                                        return data.labels.map((label, i) => {
+                                            const value = data.datasets[0].data[i];
+                                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                            return {
+                                                text: `${label} (${percentage}%)`,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                hidden: false,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                    return [];
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed;
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                    return [
+                                        `Amount: $${value.toFixed(2)}`,
+                                        `Percentage: ${percentage}%`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 1200,
+                        easing: 'easeInOutQuart'
+                    }
+                },
+                plugins: [{
+                    id: 'centerText',
+                    beforeDraw: function(chart) {
+                        const width = chart.width;
+                        const height = chart.height;
+                        const ctx = chart.ctx;
+                        ctx.restore();
+
+                        const fontSize = (height / 200).toFixed(2);
+                        ctx.font = `bold ${fontSize}em sans-serif`;
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = '#333';
+
+                        const totalText = '$' + total.toFixed(0);
+                        const textX = Math.round((width - ctx.measureText(totalText).width) / 2);
+                        const textY = height / 2 - 10;
+
+                        ctx.fillText(totalText, textX, textY);
+
+                        // Subtitle
+                        ctx.font = `${fontSize * 0.5}em sans-serif`;
+                        ctx.fillStyle = '#999';
+                        const subtitleText = 'Total Spent';
+                        const subtitleX = Math.round((width - ctx.measureText(subtitleText).width) / 2);
+                        ctx.fillText(subtitleText, subtitleX, textY + 25);
+
+                        ctx.save();
+                    }
+                }]
+            });
+        }
+
+        function updateTransactionList(transactions) {
+            const container = document.getElementById('transactions');
+
+            if (transactions.length === 0) {
+                container.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><p>No transactions for this period</p></div>';
+                return;
+            }
+
+            container.innerHTML = transactions.map(t => {
+                const date = new Date(t.date);
+                const dateStr = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                const config = CATEGORY_CONFIG[t.category] || CATEGORY_CONFIG['Other'];
+
+                return `<div class="transaction">
+                    <div class="transaction-icon ${config.class}">${config.icon}</div>
+                    <div class="transaction-details">
+                        <div class="transaction-title">${escapeHtml(t.description)}</div>
+                        <div class="transaction-meta">${t.category} • ${t.paymentMethod} • ${dateStr}</div>
+                    </div>
+                    <div class="transaction-right">
+                        <div class="transaction-amount">$${t.amount.toFixed(2)}</div>
+                        <button class="delete-btn" onclick="deleteTransaction('${t.id}')" title="Delete transaction">🗑️</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function deleteTransaction(id) {
+            if (!confirm('Are you sure you want to delete this transaction?')) {
+                return;
+            }
+
+            // Remove from allTransactions array
+            allTransactions = allTransactions.filter(t => t.id !== id);
+
+            // Update localStorage
+            const data = { transactions: allTransactions };
+            localStorage.setItem('expenseData', JSON.stringify(data));
+
+            // Refresh display
+            updateDisplay();
+
+            alert('Transaction deleted. Note: This only deletes from your browser. To sync with the server, use the admin panel.');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     </script>
 </body>
 </html>
