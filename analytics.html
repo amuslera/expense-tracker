@@ -884,19 +884,40 @@
                     }
                 },
                 plugins: [{
-                    id: 'centerFill',
+                    id: 'centerText',
                     beforeDraw: function(chart) {
                         const meta = chart.getDatasetMeta(0);
-                        if (meta.data.length > 0) {
-                            const el = meta.data[0];
-                            const ctx = chart.ctx;
-                            ctx.save();
-                            ctx.beginPath();
-                            ctx.arc(el.x, el.y, el.innerRadius, 0, 2 * Math.PI);
-                            ctx.fillStyle = '#1E1E2A';
-                            ctx.fill();
-                            ctx.restore();
-                        }
+                        if (meta.data.length === 0) return;
+                        const el = meta.data[0];
+                        const ctx = chart.ctx;
+                        const width = chart.width;
+                        const height = chart.height;
+
+                        // Fill center
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(el.x, el.y, el.innerRadius, 0, 2 * Math.PI);
+                        ctx.fillStyle = '#1E1E2A';
+                        ctx.fill();
+
+                        // Total amount
+                        const total = amounts.reduce((a, b) => a + b, 0);
+                        const fontSize = (height / 220).toFixed(2);
+                        ctx.font = `600 ${fontSize}em -apple-system, sans-serif`;
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = '#F0F0F5';
+                        const totalText = '$' + total.toFixed(0);
+                        const textX = Math.round((width - ctx.measureText(totalText).width) / 2);
+                        ctx.fillText(totalText, textX, height / 2 - 10);
+
+                        // Subtitle
+                        ctx.font = `${fontSize * 0.5}em -apple-system, sans-serif`;
+                        ctx.fillStyle = '#8888A0';
+                        const subtitle = 'Total Spent';
+                        const subX = Math.round((width - ctx.measureText(subtitle).width) / 2);
+                        ctx.fillText(subtitle, subX, height / 2 + 15);
+
+                        ctx.restore();
                     }
                 }]
             });
