@@ -727,7 +727,7 @@
 
         <!-- Summary Card -->
         <div class="card">
-            <h3 id="summaryTitle">This Month</h3>
+            <h3>Overview</h3>
             <div class="amount" id="totalAmount">$0.00</div>
             <div class="subtitle" id="totalCount">0 transactions</div>
         </div>
@@ -977,9 +977,8 @@
                 'all': 'All Time'
             };
 
-            document.getElementById('summaryTitle').textContent = titles[currentPeriod];
             document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
-            document.getElementById('totalCount').textContent = count + ' transaction' + (count !== 1 ? 's' : '');
+            document.getElementById('totalCount').textContent = count + ' transaction' + (count !== 1 ? 's' : '') + ' · ' + titles[currentPeriod];
         }
 
         function updateCategoryChart(transactions) {
