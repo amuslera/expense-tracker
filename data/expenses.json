@@ -85,6 +85,18 @@
       "sourceMessageId": "image-1771660067616",
       "status": "confirmed",
       "createdAt": "2026-02-21T07:48:15.000Z"
+    },
+    {
+      "id": "txn-1740120818000",
+      "amount": 13.00,
+      "currency": "USD",
+      "category": "Food & Dining",
+      "description": "Starbucks - Coffee and croissant",
+      "paymentMethod": "Card",
+      "date": "2026-02-21T07:53:38.000Z",
+      "source": "whatsapp-voice",
+      "status": "confirmed",
+      "createdAt": "2026-02-21T07:53:38.000Z"
     }
   ],
   "categories": [
