@@ -1,6 +1,18 @@
 {
   "transactions": [
     {
+      "id": "txn-1757664000000",
+      "amount": 37.26,
+      "currency": "USD",
+      "category": "Shopping",
+      "description": "Home Depot - Garden supplies (seeds, rake)",
+      "paymentMethod": "Card",
+      "date": "2025-09-12T17:59:00.000Z",
+      "source": "whatsapp-photo",
+      "status": "confirmed",
+      "createdAt": "2026-02-21T03:34:00.000Z"
+    },
+    {
       "id": "txn-1740094447000",
       "amount": 87.00,
       "currency": "USD",
