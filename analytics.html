@@ -294,10 +294,10 @@
 
         <!-- Period Filter -->
         <div class="period-filter">
-            <button class="period-btn" onclick="setPeriod('week')">This Week</button>
-            <button class="period-btn" onclick="setPeriod('month')">This Month</button>
-            <button class="period-btn" onclick="setPeriod('year')">This Year</button>
-            <button class="period-btn active" onclick="setPeriod('all')">All Time</button>
+            <button class="period-btn" onclick="setPeriod('week', this)">This Week</button>
+            <button class="period-btn" onclick="setPeriod('month', this)">This Month</button>
+            <button class="period-btn" onclick="setPeriod('year', this)">This Year</button>
+            <button class="period-btn active" onclick="setPeriod('all', this)">All Time</button>
             <button class="period-btn" onclick="openCustomDatePicker()">Custom</button>
         </div>
 
@@ -424,11 +424,6 @@
             document.querySelectorAll('.period-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-
-            // If called from onclick, try to get the event target
-            if (!buttonElement && window.event) {
-                buttonElement = window.event.target;
-            }
 
             if (buttonElement) {
                 buttonElement.classList.add('active');
