@@ -37,7 +37,7 @@
     </div>
 
     <div class="card">
-        <h3>Recent Transactions</h3>
+        <h3>All Transactions</h3>
         <div id="transactions"></div>
     </div>
 
@@ -45,31 +45,47 @@
         fetch('data/expenses.json')
             .then(r => r.json())
             .then(data => {
-                const txns = data.transactions || [];
-                const total = txns.reduce((sum, t) => sum + t.amount, 0);
+                const txns = (data.transactions || []).sort((a, b) => new Date(b.date) - new Date(a.date));
 
-                document.getElementById('weekAmount').textContent = '$' + total.toFixed(2);
-                document.getElementById('weekCount').textContent = txns.length + ' transactions';
-                document.getElementById('monthAmount').textContent = '$' + total.toFixed(2);
-                document.getElementById('monthCount').textContent = txns.length + ' transactions';
+                // Calculate date ranges
+                const now = new Date();
+                const weekStart = new Date(now);
+                weekStart.setDate(now.getDate() - 7);
+                const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-                // Transactions
-                document.getElementById('transactions').innerHTML = txns.map(t => 
-                    `<div class="transaction">
-                        <strong>${t.description}</strong> - <strong>$${t.amount.toFixed(2)}</strong><br>
-                        <small>${t.category} • ${t.paymentMethod}</small>
-                    </div>`
-                ).join('');
+                // Filter by date ranges
+                const weekTxns = txns.filter(t => new Date(t.date) >= weekStart);
+                const monthTxns = txns.filter(t => new Date(t.date) >= monthStart);
 
-                // Categories
+                // Calculate totals
+                const weekTotal = weekTxns.reduce((sum, t) => sum + t.amount, 0);
+                const monthTotal = monthTxns.reduce((sum, t) => sum + t.amount, 0);
+                const allTotal = txns.reduce((sum, t) => sum + t.amount, 0);
+
+                document.getElementById('weekAmount').textContent = '$' + weekTotal.toFixed(2);
+                document.getElementById('weekCount').textContent = weekTxns.length + ' transactions';
+                document.getElementById('monthAmount').textContent = '$' + monthTotal.toFixed(2);
+                document.getElementById('monthCount').textContent = monthTxns.length + ' transactions';
+
+                // Transactions with dates
+                document.getElementById('transactions').innerHTML = txns.map(t => {
+                    const date = new Date(t.date);
+                    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    return `<div class="transaction">
+                        <div><strong>${t.description}</strong> - <strong>$${t.amount.toFixed(2)}</strong></div>
+                        <small>${t.category} • ${t.paymentMethod} • ${dateStr}</small>
+                    </div>`;
+                }).join('');
+
+                // Categories (all time)
                 const cats = {};
                 txns.forEach(t => cats[t.category] = (cats[t.category] || 0) + t.amount);
-                
+
                 document.getElementById('categories').innerHTML = Object.entries(cats)
-                    .map(([cat, amt]) => 
+                    .map(([cat, amt]) =>
                         `<div style="margin: 15px 0;">
-                            <div><strong>${cat}</strong> - $${amt.toFixed(2)} (${(amt/total*100).toFixed(0)}%)</div>
-                            <div class="progress"><div class="bar" style="width: ${amt/total*100}%"></div></div>
+                            <div><strong>${cat}</strong> - $${amt.toFixed(2)} (${(amt/allTotal*100).toFixed(0)}%)</div>
+                            <div class="progress"><div class="bar" style="width: ${amt/allTotal*100}%"></div></div>
                         </div>`
                     ).join('');
             })
