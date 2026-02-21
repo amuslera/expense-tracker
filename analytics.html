@@ -488,7 +488,7 @@
                 case 'all': return 'All Time';
                 case 'custom':
                     if (customStartDate && customEndDate) {
-                        const opts = { month: 'short', day: 'numeric' };
+                        const opts = { month: 'short', day: 'numeric', year: 'numeric' };
                         const s = customStartDate.toLocaleDateString('en-US', opts);
                         const e = customEndDate.toLocaleDateString('en-US', opts);
                         return s === e ? s : s + ' – ' + e;
