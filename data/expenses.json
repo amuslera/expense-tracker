@@ -59,19 +59,6 @@
       "source": "whatsapp-text",
       "status": "confirmed",
       "createdAt": "2026-02-21T05:01:52.000Z"
-    },
-    {
-      "id": "txn-1740114865834",
-      "amount": 1021.55,
-      "currency": "USD",
-      "category": "Transportation",
-      "description": "Flight - Aerolineas Argentinas",
-      "paymentMethod": "Card",
-      "date": "2026-02-20T13:39:00.000Z",
-      "source": "whatsapp-photo",
-      "sourceMessageId": "image-1771652065834",
-      "status": "confirmed",
-      "createdAt": "2026-02-21T05:34:25.000Z"
     }
   ],
   "categories": [
