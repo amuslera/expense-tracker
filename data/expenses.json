@@ -1,6 +1,18 @@
 {
   "transactions": [
     {
+      "id": "txn-1740108381000",
+      "amount": 1380.0,
+      "currency": "USD",
+      "category": "Shopping",
+      "description": "Regalo para Valeria",
+      "paymentMethod": "Card",
+      "date": "2026-02-21T00:46:00.000Z",
+      "source": "whatsapp-voice",
+      "status": "confirmed",
+      "createdAt": "2026-02-21T04:07:00.000Z"
+    },
+    {
       "id": "txn-1757664000000",
       "amount": 37.26,
       "currency": "USD",
@@ -14,7 +26,7 @@
     },
     {
       "id": "txn-1740094447000",
-      "amount": 87.00,
+      "amount": 87.0,
       "currency": "USD",
       "category": "Food & Dining",
       "description": "Almuerzo con Vale",
@@ -29,7 +41,7 @@
       "amount": 12.99,
       "currency": "USD",
       "category": "Entertainment",
-      "description": "Suscripción Netflix",
+      "description": "Suscripci\u00f3n Netflix",
       "paymentMethod": "Card",
       "date": "2026-02-21T03:24:07.000Z",
       "source": "whatsapp-text",
