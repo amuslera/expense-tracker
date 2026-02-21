@@ -123,9 +123,7 @@
                         Unlock
                     </button>
                 </form>
-                <div class="auth-modal__footer">
-                    <small>Default password: admin</small>
-                </div>
+                <div class="auth-modal__footer"></div>
             </div>
         `;
 

@@ -75,6 +75,40 @@
             border-color: #2563eb;
         }
 
+        /* Sync Status */
+        .sync-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 0 4px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .sync-status svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .sync-status svg:hover {
+            color: #64748b;
+        }
+
+        .sync-status.syncing svg {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         .card {
             background: white;
             padding: 24px;
@@ -144,6 +178,29 @@
             border-radius: 8px;
             opacity: 0;
             transition: opacity 0.3s;
+            cursor: pointer;
+            gap: 12px;
+            user-select: none;
+        }
+
+        .swipe-confirm-yes,
+        .swipe-confirm-no {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .swipe-confirm-yes {
+            background: white;
+            color: #dc2626;
+        }
+
+        .swipe-confirm-no {
+            background: rgba(255,255,255,0.2);
+            color: white;
         }
 
         .transaction.swiping {
@@ -399,8 +456,8 @@
             position: fixed;
             bottom: 88px;
             right: 20px;
-            width: 60px;
-            height: 60px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background: #2563eb;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
@@ -424,10 +481,10 @@
         }
 
         .fab svg {
-            width: 26px;
-            height: 26px;
+            width: 20px;
+            height: 20px;
             stroke: white;
-            stroke-width: 3;
+            stroke-width: 2.5;
         }
 
         /* Bottom Navigation */
@@ -544,8 +601,8 @@
             .fab {
                 bottom: 78px;
                 right: 16px;
-                width: 56px;
-                height: 56px;
+                width: 44px;
+                height: 44px;
             }
             .modal-content {
                 margin: 0 12px;
@@ -566,6 +623,16 @@
             <button class="period-btn active" data-period="month">This Month</button>
             <button class="period-btn" data-period="year">This Year</button>
             <button class="period-btn" data-period="all">All Time</button>
+        </div>
+
+        <!-- Sync Status -->
+        <div class="sync-status" id="syncStatus">
+            <span id="syncText">Syncing...</span>
+            <svg viewBox="0 0 24 24" onclick="loadData()" title="Refresh">
+                <path d="M23 4v6h-6"></path>
+                <path d="M1 20v-6h6"></path>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
         </div>
 
         <!-- Summary Card -->
@@ -591,7 +658,7 @@
     </div>
 
     <!-- Floating Action Button -->
-    <button class="fab" onclick="showAddExpense()">
+    <button class="fab" onclick="showAddExpense()" title="Add manually">
         <svg viewBox="0 0 24 24" fill="none">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -673,7 +740,7 @@
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-delete" onclick="deleteCurrentTransaction()">
+                <button class="btn btn-delete" id="modalDeleteBtn" onclick="deleteCurrentTransaction()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="3 6 5 6 21 6"></polyline>
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -704,9 +771,11 @@
         let currentPeriod = 'month';
         let categoryChart = null;
         let currentTransactionId = null;
+        let lastSyncTime = null;
 
         // Load and display data
         function loadData() {
+            updateSyncStatus('syncing');
             // Always fetch from server to get latest data from JJ Gasto
             // LocalStorage is only used for offline fallback
             fetch('data/expenses.json?t=' + Date.now())
@@ -717,10 +786,13 @@
                     allTransactions = (data.transactions || []).sort((a, b) =>
                         new Date(b.date) - new Date(a.date)
                     );
+                    lastSyncTime = new Date();
+                    updateSyncStatus('done');
                     updateDisplay();
                 })
                 .catch(err => {
                     console.error('Error loading data from server, trying localStorage...', err);
+                    updateSyncStatus('error');
                     // Fallback to localStorage if server fetch fails (offline mode)
                     const stored = localStorage.getItem('expenseData');
                     if (stored) {
@@ -730,7 +802,6 @@
                                 new Date(b.date) - new Date(a.date)
                             );
                             updateDisplay();
-                            // Show warning that data might be stale
                             showToast('Showing cached data - may be out of date');
                         } catch (e) {
                             console.error('Error parsing localStorage:', e);
@@ -965,6 +1036,8 @@
             initSwipeHandlers();
         }
 
+        let lastSwipeTime = 0;
+
         function initSwipeHandlers() {
             const transactions = document.querySelectorAll('.transaction');
 
@@ -974,7 +1047,9 @@
                 let isDragging = false;
 
                 transaction.addEventListener('touchstart', (e) => {
+                    dismissAllSwipes();
                     startX = e.touches[0].clientX;
+                    currentX = startX;
                     isDragging = true;
                     transaction.classList.add('swiping');
                 });
@@ -984,8 +1059,15 @@
 
                     currentX = e.touches[0].clientX;
                     const diff = startX - currentX;
+                    const container = transaction.closest('.transaction-container');
+                    const isRevealed = container.classList.contains('show-delete');
 
-                    if (diff > 0) {
+                    if (isRevealed && diff < 0) {
+                        // Already revealed: swipe right to dismiss
+                        const closeDist = Math.min(Math.abs(diff), 100);
+                        transaction.style.transform = `translateX(-${100 - closeDist}px)`;
+                    } else if (!isRevealed && diff > 0) {
+                        // Swiping left to reveal
                         transaction.style.transform = `translateX(-${Math.min(diff, 100)}px)`;
                     }
                 });
@@ -996,31 +1078,99 @@
                     transaction.classList.remove('swiping');
 
                     const diff = startX - currentX;
+                    const container = transaction.closest('.transaction-container');
+                    const isRevealed = container.classList.contains('show-delete');
 
-                    if (diff > 80) {
-                        // Show delete
+                    if (isRevealed && diff < -40) {
+                        // Swiped right enough to dismiss
+                        dismissSwipe(container, transaction);
+                    } else if (isRevealed) {
+                        // Still revealed, snap back to revealed position
                         transaction.style.transform = 'translateX(-100px)';
-                        transaction.closest('.transaction-container').classList.add('show-delete');
-
-                        // Delete after a moment
-                        setTimeout(() => {
-                            const id = transaction.dataset.id;
-                            if (confirm('Delete this transaction?')) {
-                                deleteTransactionById(id);
-                            } else {
-                                transaction.style.transform = 'translateX(0)';
-                                transaction.closest('.transaction-container').classList.remove('show-delete');
-                            }
-                        }, 300);
+                    } else if (diff > 80) {
+                        // Swiped left far enough to reveal delete
+                        e.preventDefault();
+                        lastSwipeTime = Date.now();
+                        transaction.style.transform = 'translateX(-100px)';
+                        container.classList.add('show-delete');
                     } else {
-                        // Snap back
+                        // Not far enough, snap back
                         transaction.style.transform = 'translateX(0)';
                     }
                 });
             });
+
+            // Click handlers for swipe delete buttons
+            document.querySelectorAll('.transaction-swipe-actions').forEach(action => {
+                action.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (action.dataset.confirming) return;
+
+                    const container = action.closest('.transaction-container');
+                    const transactionEl = container.querySelector('.transaction');
+                    const id = transactionEl.dataset.id;
+
+                    // Show inline confirmation
+                    action.dataset.confirming = 'true';
+                    action.innerHTML = `
+                        <span>Delete?</span>
+                        <button class="swipe-confirm-yes">Yes</button>
+                        <button class="swipe-confirm-no">No</button>
+                    `;
+
+                    action.querySelector('.swipe-confirm-yes').addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        deleteTransactionById(id);
+                    });
+
+                    action.querySelector('.swipe-confirm-no').addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        resetSwipeAction(action);
+                        dismissSwipe(container, transactionEl);
+                    });
+                });
+            });
+
+            // Dismiss on tap outside (register once)
+            if (!initSwipeHandlers._bound) {
+                initSwipeHandlers._bound = true;
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.transaction-swipe-actions')) {
+                        dismissAllSwipes();
+                    }
+                });
+            }
+        }
+
+        function dismissSwipe(container, transactionEl) {
+            transactionEl.style.transform = 'translateX(0)';
+            container.classList.remove('show-delete');
+            const action = container.querySelector('.transaction-swipe-actions');
+            resetSwipeAction(action);
+        }
+
+        function resetSwipeAction(action) {
+            action.innerHTML = 'Delete';
+            delete action.dataset.confirming;
+        }
+
+        function dismissAllSwipes() {
+            document.querySelectorAll('.transaction-container.show-delete').forEach(container => {
+                const transactionEl = container.querySelector('.transaction');
+                dismissSwipe(container, transactionEl);
+            });
         }
 
         function showTransactionDetail(id) {
+            // If swipe just happened or is active, dismiss instead of opening modal
+            if (Date.now() - lastSwipeTime < 400) return;
+            const clickedEl = document.querySelector(`.transaction[data-id="${id}"]`);
+            const container = clickedEl?.closest('.transaction-container');
+            if (container?.classList.contains('show-delete')) {
+                dismissSwipe(container, clickedEl);
+                return;
+            }
+
             const transaction = allTransactions.find(t => t.id === id);
             if (!transaction) return;
 
@@ -1045,6 +1195,9 @@
             const dd = String(dateObj.getDate()).padStart(2, '0');
             document.getElementById('editDate').value = `${yyyy}-${mm}-${dd}`;
 
+            // Show delete button in edit mode
+            document.getElementById('modalDeleteBtn').style.display = '';
+
             // Show modal
             document.getElementById('transactionModal').classList.add('active');
         }
@@ -1055,8 +1208,6 @@
         }
 
         function saveTransaction() {
-            if (!currentTransactionId) return;
-
             // Get form values
             const description = document.getElementById('editDescription').value.trim();
             const amount = parseFloat(document.getElementById('editAmount').value);
@@ -1070,29 +1221,45 @@
                 return;
             }
 
-            // Update transaction
-            const index = allTransactions.findIndex(t => t.id === currentTransactionId);
-            if (index !== -1) {
-                allTransactions[index] = {
-                    ...allTransactions[index],
-                    description,
+            if (currentTransactionId) {
+                // Edit existing transaction
+                const index = allTransactions.findIndex(t => t.id === currentTransactionId);
+                if (index !== -1) {
+                    allTransactions[index] = {
+                        ...allTransactions[index],
+                        description,
+                        amount,
+                        category,
+                        paymentMethod,
+                        date
+                    };
+                    showToast('Transaction updated');
+                }
+            } else {
+                // Add new transaction
+                const newTransaction = {
+                    id: 'txn-' + Date.now(),
                     amount,
+                    currency: 'USD',
                     category,
+                    description,
                     paymentMethod,
-                    date
+                    date,
+                    source: 'web',
+                    status: 'confirmed',
+                    createdAt: new Date().toISOString()
                 };
-
-                // Update localStorage
-                const data = { transactions: allTransactions };
-                localStorage.setItem('expenseData', JSON.stringify(data));
-
-                // Close modal and refresh display
-                closeModal();
-                updateDisplay();
-
-                // Show confirmation
-                showToast('Transaction updated successfully');
+                allTransactions.unshift(newTransaction);
+                showToast('Expense added');
             }
+
+            // Update localStorage
+            const data = { transactions: allTransactions };
+            localStorage.setItem('expenseData', JSON.stringify(data));
+
+            // Close modal and refresh display
+            closeModal();
+            updateDisplay();
         }
 
         function deleteCurrentTransaction() {
@@ -1122,8 +1289,33 @@
         }
 
         function showAddExpense() {
-            alert('Add Expense - Coming Soon!');
-            // Placeholder for future add expense functionality
+            currentTransactionId = null;
+
+            // Set modal for add mode
+            const config = CATEGORY_CONFIG['Food & Dining'];
+            document.getElementById('modalIcon').className = `transaction-icon ${config.class}`;
+            document.getElementById('modalIcon').textContent = config.icon;
+            document.getElementById('modalTitle').textContent = 'New Expense';
+            document.getElementById('modalCategory').textContent = '';
+
+            // Clear fields and set defaults
+            document.getElementById('editDescription').value = '';
+            document.getElementById('editAmount').value = '';
+            document.getElementById('editCategory').value = 'Food & Dining';
+            document.getElementById('editPaymentMethod').value = 'Card';
+
+            // Default to today
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            document.getElementById('editDate').value = `${yyyy}-${mm}-${dd}`;
+
+            // Hide delete button in add mode
+            document.getElementById('modalDeleteBtn').style.display = 'none';
+
+            // Show modal
+            document.getElementById('transactionModal').classList.add('active');
         }
 
         function showPlaceholder(pageName) {
@@ -1138,6 +1330,51 @@
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
+
+        function updateSyncStatus(state) {
+            const statusEl = document.getElementById('syncStatus');
+            const textEl = document.getElementById('syncText');
+            if (!statusEl || !textEl) return;
+
+            if (state === 'syncing') {
+                statusEl.classList.add('syncing');
+                textEl.textContent = 'Syncing...';
+            } else if (state === 'error') {
+                statusEl.classList.remove('syncing');
+                textEl.textContent = 'Sync failed';
+            } else {
+                statusEl.classList.remove('syncing');
+                textEl.textContent = 'Updated just now';
+            }
+        }
+
+        function formatRelativeTime(date) {
+            if (!date) return 'Never';
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 10) return 'just now';
+            if (seconds < 60) return seconds + 's ago';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return minutes + ' min ago';
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return hours + 'h ago';
+            return date.toLocaleDateString();
+        }
+
+        // Update the relative timestamp every 30s
+        setInterval(() => {
+            if (lastSyncTime) {
+                const textEl = document.getElementById('syncText');
+                const statusEl = document.getElementById('syncStatus');
+                if (textEl && statusEl && !statusEl.classList.contains('syncing')) {
+                    textEl.textContent = 'Updated ' + formatRelativeTime(lastSyncTime);
+                }
+            }
+        }, 30000);
+
+        // Auto-refresh data from server every 60s
+        setInterval(() => {
+            loadData();
+        }, 60000);
 
         function escapeHtml(text) {
             const div = document.createElement('div');
