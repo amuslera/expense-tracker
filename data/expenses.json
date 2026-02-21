@@ -60,6 +60,18 @@
       "sourceMessageId": "image-1771652065834",
       "status": "confirmed",
       "createdAt": "2026-02-21T05:34:25.000Z"
+    },
+    {
+      "id": "txn-1740117020000",
+      "amount": 32.00,
+      "currency": "USD",
+      "category": "Food & Dining",
+      "description": "Pizza with friends",
+      "paymentMethod": "Card",
+      "date": "2026-02-21T06:10:20.000Z",
+      "source": "whatsapp-text",
+      "status": "confirmed",
+      "createdAt": "2026-02-21T06:10:20.000Z"
     }
   ],
   "categories": [
