@@ -33,6 +33,12 @@
             margin-bottom: 20px;
         }
 
+        .app-header__logo {
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
         .app-header__title {
             font-size: 20px;
             font-weight: 700;
@@ -899,11 +905,14 @@
     <div class="container">
         <!-- App Header -->
         <div class="app-header">
-            <div class="app-header__title">Otto</div>
+            <img src="media/otto-icon.png" alt="Otto" class="app-header__logo">
             <div class="app-header__right">
                 <button class="app-header__add" onclick="showAddExpense()">+ Add manually</button>
                 <div class="app-header__avatar">
-                    <img src="media/otto-icon.png" alt="Otto" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
                 </div>
             </div>
         </div>
@@ -1129,6 +1138,8 @@
         const SUPABASE_URL = 'https://mkcscqxbezbicpyduowy.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rY3NjcXhiZXpiaWNweWR1b3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2NTkxOTIsImV4cCI6MjA4NzIzNTE5Mn0.K3773WkG-uNYts-2utFQnyvR-U5CaCURQfZ7_qFdcow';
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const STORAGE_BUCKET = 'receipts';
+        const STORAGE_PUBLIC_URL = SUPABASE_URL + '/storage/v1/object/public/' + STORAGE_BUCKET + '/';
 
         function mapFromSupabase(row) {
             return {
@@ -1755,6 +1766,10 @@
 
         let pendingReceiptFile = null;
 
+        function getReceiptUrl(filename) {
+            return STORAGE_PUBLIC_URL + filename;
+        }
+
         function updateReceiptUI(receiptImage) {
             const emptyEl = document.getElementById('receiptEmpty');
             const previewEl = document.getElementById('receiptPreview');
@@ -1764,9 +1779,7 @@
             if (receiptImage) {
                 emptyEl.style.display = 'none';
                 previewEl.style.display = 'flex';
-                // Check localStorage first (uploaded from browser, not yet synced to repo)
-                const cached = localStorage.getItem('receipt_' + receiptImage);
-                imgEl.src = cached || ('media/' + receiptImage);
+                imgEl.src = getReceiptUrl(receiptImage);
                 imgEl.dataset.filename = receiptImage;
             } else {
                 emptyEl.style.display = 'flex';
@@ -1774,7 +1787,6 @@
                 imgEl.src = '';
                 imgEl.dataset.filename = '';
             }
-            // Reset file inputs
             document.getElementById('receiptFileInput').value = '';
             document.getElementById('receiptReplaceInput').value = '';
         }
@@ -1785,17 +1797,12 @@
 
             pendingReceiptFile = file;
 
-            // Show preview immediately
             const reader = new FileReader();
             reader.onload = function(e) {
-                const previewEl = document.getElementById('receiptPreview');
-                const emptyEl = document.getElementById('receiptEmpty');
-                const imgEl = document.getElementById('receiptImage');
-
-                emptyEl.style.display = 'none';
-                previewEl.style.display = 'flex';
-                imgEl.src = e.target.result;
-                imgEl.dataset.filename = '';
+                document.getElementById('receiptEmpty').style.display = 'none';
+                document.getElementById('receiptPreview').style.display = 'flex';
+                document.getElementById('receiptImage').src = e.target.result;
+                document.getElementById('receiptImage').dataset.filename = '';
             };
             reader.readAsDataURL(file);
         }
@@ -1804,12 +1811,10 @@
             const timestamp = transactionId.replace('txn-', '');
             const filename = 'image-' + timestamp + '.jpeg';
 
-            // Convert to JPEG blob for consistency
             return new Promise((resolve, reject) => {
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    // Resize if very large (max 1200px on longest side)
                     let w = img.width, h = img.height;
                     const maxDim = 1200;
                     if (w > maxDim || h > maxDim) {
@@ -1821,18 +1826,21 @@
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     canvas.toBlob(async (blob) => {
                         try {
-                            // Upload to GitHub repo via committing (for now, save to media/ via a data URL workaround)
-                            // Since we can't push to GitHub from the browser, we store the image as base64 in localStorage
-                            // and update Supabase with the filename. The image will need to be synced separately.
-                            const base64 = canvas.toDataURL('image/jpeg', 0.85);
-                            localStorage.setItem('receipt_' + filename, base64);
+                            // Upload to Supabase Storage
+                            const { error: uploadError } = await sb.storage
+                                .from(STORAGE_BUCKET)
+                                .upload(filename, blob, {
+                                    contentType: 'image/jpeg',
+                                    upsert: true
+                                });
+                            if (uploadError) throw uploadError;
 
-                            // Update Supabase with the filename
-                            const { error } = await sb.from('transactions')
+                            // Update transaction record with filename
+                            const { error: dbError } = await sb.from('transactions')
                                 .update({ receipt_image: filename })
                                 .eq('id', transactionId);
+                            if (dbError) throw dbError;
 
-                            if (error) throw error;
                             resolve(filename);
                         } catch (err) {
                             reject(err);
@@ -1847,6 +1855,9 @@
         async function removeReceipt() {
             if (!currentTransactionId) return;
 
+            const txn = allTransactions.find(t => t.id === currentTransactionId);
+            const oldFilename = txn?.receiptImage;
+
             const { error } = await sb.from('transactions')
                 .update({ receipt_image: null })
                 .eq('id', currentTransactionId);
@@ -1856,10 +1867,12 @@
                 return;
             }
 
-            // Update local data
-            const txn = allTransactions.find(t => t.id === currentTransactionId);
-            if (txn) txn.receiptImage = null;
+            // Delete from storage
+            if (oldFilename) {
+                await sb.storage.from(STORAGE_BUCKET).remove([oldFilename]);
+            }
 
+            if (txn) txn.receiptImage = null;
             updateReceiptUI(null);
             pendingReceiptFile = null;
             showToast('Receipt removed');
