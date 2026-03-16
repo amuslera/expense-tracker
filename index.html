@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Expense Tracker</title>
+    <title>Otto</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -520,6 +520,116 @@
             padding: 24px;
         }
 
+        /* Receipt Image */
+        .receipt-empty {
+            display: flex;
+        }
+
+        .receipt-add-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: #26263A;
+            border: 1px dashed #3E3E56;
+            border-radius: 10px;
+            color: #8888A0;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .receipt-add-btn:hover {
+            background: #2E2E42;
+            border-color: #4F7CFF;
+            color: #B0B0C8;
+        }
+
+        .receipt-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: #26263A;
+            border-radius: 10px;
+        }
+
+        .receipt-thumbnail {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+        }
+
+        .receipt-thumbnail:hover {
+            opacity: 0.8;
+        }
+
+        .receipt-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .receipt-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: #1E1E2A;
+            border: 1px solid #3E3E56;
+            border-radius: 8px;
+            color: #8888A0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .receipt-action-btn:hover {
+            background: #2E2E42;
+            color: #F0F0F5;
+            border-color: #55556A;
+        }
+
+        .receipt-action-btn--danger:hover {
+            background: #3B1A1A;
+            color: #F87171;
+            border-color: #7F1D1D;
+        }
+
+        /* Receipt Fullscreen Viewer */
+        .receipt-fullscreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3000;
+            background: rgba(0, 0, 0, 0.92);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            cursor: zoom-out;
+        }
+
+        .receipt-fullscreen.active {
+            display: flex;
+        }
+
+        .receipt-fullscreen img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
 
         .modal-actions {
             padding: 16px 24px 24px 24px;
@@ -789,14 +899,11 @@
     <div class="container">
         <!-- App Header -->
         <div class="app-header">
-            <div class="app-header__title">JJ Gasto</div>
+            <div class="app-header__title">Otto</div>
             <div class="app-header__right">
                 <button class="app-header__add" onclick="showAddExpense()">+ Add manually</button>
                 <div class="app-header__avatar">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
+                    <img src="media/otto-icon.png" alt="Otto" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
                 </div>
             </div>
         </div>
@@ -941,6 +1048,46 @@
                     <label class="form-label" for="editDate">Date</label>
                     <input type="date" id="editDate" class="form-input" required>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">Receipt</label>
+                    <div id="receiptSection">
+                        <!-- No image state -->
+                        <div id="receiptEmpty" class="receipt-empty">
+                            <label class="receipt-add-btn" for="receiptFileInput">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                Add Receipt
+                            </label>
+                            <input type="file" id="receiptFileInput" accept="image/*" style="display:none" onchange="handleReceiptUpload(this)">
+                        </div>
+                        <!-- Has image state -->
+                        <div id="receiptPreview" class="receipt-preview" style="display:none">
+                            <img id="receiptImage" class="receipt-thumbnail" onclick="viewReceiptFullscreen()" alt="Receipt">
+                            <div class="receipt-actions">
+                                <button type="button" class="receipt-action-btn" onclick="viewReceiptFullscreen()" title="View full size">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path>
+                                    </svg>
+                                </button>
+                                <label class="receipt-action-btn" for="receiptReplaceInput" title="Replace">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path>
+                                    </svg>
+                                </label>
+                                <input type="file" id="receiptReplaceInput" accept="image/*" style="display:none" onchange="handleReceiptUpload(this)">
+                                <button type="button" class="receipt-action-btn receipt-action-btn--danger" onclick="removeReceipt()" title="Remove">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
@@ -954,6 +1101,11 @@
                 <button class="btn btn-primary" onclick="saveTransaction()">Save</button>
             </div>
         </div>
+    </div>
+
+    <!-- Receipt Fullscreen Viewer -->
+    <div class="receipt-fullscreen" id="receiptFullscreen" onclick="closeReceiptFullscreen()">
+        <img id="receiptFullscreenImg" src="" alt="Receipt">
     </div>
 
     <!-- Chart.js Library -->
@@ -989,12 +1141,13 @@
                 date: row.date,
                 source: row.source,
                 status: row.status,
-                createdAt: row.created_at
+                createdAt: row.created_at,
+                receiptImage: row.receipt_image || null
             };
         }
 
         function mapToSupabase(t) {
-            return {
+            const obj = {
                 id: t.id,
                 amount: t.amount,
                 currency: t.currency || 'USD',
@@ -1006,6 +1159,10 @@
                 status: t.status || 'confirmed',
                 created_at: t.createdAt
             };
+            if (t.receiptImage !== undefined) {
+                obj.receipt_image = t.receiptImage;
+            }
+            return obj;
         }
 
         let allTransactions = [];
@@ -1504,6 +1661,9 @@
             const dd = String(dateObj.getDate()).padStart(2, '0');
             document.getElementById('editDate').value = `${yyyy}-${mm}-${dd}`;
 
+            // Show receipt image if available
+            updateReceiptUI(transaction.receiptImage);
+
             // Show delete button in edit mode
             document.getElementById('modalDeleteBtn').style.display = '';
 
@@ -1552,6 +1712,17 @@
                 return;
             }
 
+            // Handle pending receipt upload
+            if (pendingReceiptFile) {
+                try {
+                    await uploadReceiptImage(pendingReceiptFile, transaction.id);
+                } catch (err) {
+                    console.error('Error uploading receipt:', err);
+                    showToast('Expense saved, but receipt upload failed');
+                }
+                pendingReceiptFile = null;
+            }
+
             showToast(currentTransactionId ? 'Transaction updated' : 'Expense added');
             closeModal();
             loadData();
@@ -1580,6 +1751,133 @@
             loadData();
         }
 
+        // ============ Receipt Image Functions ============
+
+        let pendingReceiptFile = null;
+
+        function updateReceiptUI(receiptImage) {
+            const emptyEl = document.getElementById('receiptEmpty');
+            const previewEl = document.getElementById('receiptPreview');
+            const imgEl = document.getElementById('receiptImage');
+            pendingReceiptFile = null;
+
+            if (receiptImage) {
+                emptyEl.style.display = 'none';
+                previewEl.style.display = 'flex';
+                // Check localStorage first (uploaded from browser, not yet synced to repo)
+                const cached = localStorage.getItem('receipt_' + receiptImage);
+                imgEl.src = cached || ('media/' + receiptImage);
+                imgEl.dataset.filename = receiptImage;
+            } else {
+                emptyEl.style.display = 'flex';
+                previewEl.style.display = 'none';
+                imgEl.src = '';
+                imgEl.dataset.filename = '';
+            }
+            // Reset file inputs
+            document.getElementById('receiptFileInput').value = '';
+            document.getElementById('receiptReplaceInput').value = '';
+        }
+
+        function handleReceiptUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            pendingReceiptFile = file;
+
+            // Show preview immediately
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewEl = document.getElementById('receiptPreview');
+                const emptyEl = document.getElementById('receiptEmpty');
+                const imgEl = document.getElementById('receiptImage');
+
+                emptyEl.style.display = 'none';
+                previewEl.style.display = 'flex';
+                imgEl.src = e.target.result;
+                imgEl.dataset.filename = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function uploadReceiptImage(file, transactionId) {
+            const timestamp = transactionId.replace('txn-', '');
+            const filename = 'image-' + timestamp + '.jpeg';
+
+            // Convert to JPEG blob for consistency
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    // Resize if very large (max 1200px on longest side)
+                    let w = img.width, h = img.height;
+                    const maxDim = 1200;
+                    if (w > maxDim || h > maxDim) {
+                        if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+                        else { w = Math.round(w * maxDim / h); h = maxDim; }
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    canvas.toBlob(async (blob) => {
+                        try {
+                            // Upload to GitHub repo via committing (for now, save to media/ via a data URL workaround)
+                            // Since we can't push to GitHub from the browser, we store the image as base64 in localStorage
+                            // and update Supabase with the filename. The image will need to be synced separately.
+                            const base64 = canvas.toDataURL('image/jpeg', 0.85);
+                            localStorage.setItem('receipt_' + filename, base64);
+
+                            // Update Supabase with the filename
+                            const { error } = await sb.from('transactions')
+                                .update({ receipt_image: filename })
+                                .eq('id', transactionId);
+
+                            if (error) throw error;
+                            resolve(filename);
+                        } catch (err) {
+                            reject(err);
+                        }
+                    }, 'image/jpeg', 0.85);
+                };
+                img.onerror = reject;
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        async function removeReceipt() {
+            if (!currentTransactionId) return;
+
+            const { error } = await sb.from('transactions')
+                .update({ receipt_image: null })
+                .eq('id', currentTransactionId);
+
+            if (error) {
+                showToast('Error removing receipt');
+                return;
+            }
+
+            // Update local data
+            const txn = allTransactions.find(t => t.id === currentTransactionId);
+            if (txn) txn.receiptImage = null;
+
+            updateReceiptUI(null);
+            pendingReceiptFile = null;
+            showToast('Receipt removed');
+        }
+
+        function viewReceiptFullscreen() {
+            const imgEl = document.getElementById('receiptImage');
+            if (!imgEl.src) return;
+            document.getElementById('receiptFullscreenImg').src = imgEl.src;
+            document.getElementById('receiptFullscreen').classList.add('active');
+        }
+
+        function closeReceiptFullscreen() {
+            document.getElementById('receiptFullscreen').classList.remove('active');
+        }
+
+        // ============ End Receipt Functions ============
+
         function showAddExpense() {
             currentTransactionId = null;
 
@@ -1602,6 +1900,9 @@
             const mm = String(now.getMonth() + 1).padStart(2, '0');
             const dd = String(now.getDate()).padStart(2, '0');
             document.getElementById('editDate').value = `${yyyy}-${mm}-${dd}`;
+
+            // Clear receipt section
+            updateReceiptUI(null);
 
             // Hide delete button in add mode
             document.getElementById('modalDeleteBtn').style.display = 'none';
@@ -1677,7 +1978,11 @@
         // Close modal on escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeModal();
+                if (document.getElementById('receiptFullscreen').classList.contains('active')) {
+                    closeReceiptFullscreen();
+                } else {
+                    closeModal();
+                }
             }
         });
     </script>
