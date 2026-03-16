@@ -8,11 +8,22 @@
 
   // Configuration
   const CONFIG = {
-    DATA_URL: '/data/expenses.json',
+    SUPABASE_URL: 'https://mkcscqxbezbicpyduowy.supabase.co/rest/v1/transactions?order=date.desc',
+    SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rY3NjcXhiZXpiaWNweWR1b3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2NTkxOTIsImV4cCI6MjA4NzIzNTE5Mn0.K3773WkG-uNYts-2utFQnyvR-U5CaCURQfZ7_qFdcow',
     CACHE_KEY: 'expense_tracker_data',
     CACHE_TIMESTAMP_KEY: 'expense_tracker_timestamp',
     REFRESH_INTERVAL: 60000, // 60 seconds
     CACHE_DURATION: 300000, // 5 minutes
+    CATEGORIES: [
+      'Bills & Utilities',
+      'Food & Dining',
+      'Transportation',
+      'Shopping',
+      'Entertainment',
+      'Health',
+      'Other',
+    ],
+    PAYMENT_METHODS: ['Cash', 'Card'],
   };
 
   // Global state
@@ -73,10 +84,12 @@
     notifyListeners();
 
     try {
-      const response = await fetch(CONFIG.DATA_URL, {
+      const response = await fetch(CONFIG.SUPABASE_URL, {
         cache: 'no-cache',
         headers: {
           'Accept': 'application/json',
+          'apikey': CONFIG.SUPABASE_KEY,
+          'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY,
         },
       });
 
@@ -84,7 +97,26 @@
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const rows = await response.json();
+
+      // Map Supabase snake_case to camelCase and wrap in expected structure
+      const data = {
+        transactions: rows.map(row => ({
+          id: row.id,
+          amount: row.amount,
+          currency: row.currency,
+          category: row.category,
+          description: row.description,
+          paymentMethod: row.payment_method,
+          date: row.date,
+          source: row.source,
+          status: row.status,
+          createdAt: row.created_at,
+          receiptImage: row.receipt_image || null,
+        })),
+        categories: CONFIG.CATEGORIES,
+        paymentMethods: CONFIG.PAYMENT_METHODS,
+      };
 
       // Validate data structure
       validateData(data);
