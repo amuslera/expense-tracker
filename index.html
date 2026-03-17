@@ -1053,12 +1053,19 @@
                             </svg>
                             CSV
                         </button>
-                        <button class="select-action-btn" onclick="copySelected()" title="Copy to clipboard">
+                        <button class="select-action-btn" onclick="duplicateSelected()" title="Duplicate expenses">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                             </svg>
-                            Copy
+                            Duplicate
+                        </button>
+                        <button class="select-action-btn" onclick="copySelected()" title="Copy to clipboard">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            </svg>
+                            Clipboard
                         </button>
                         <button class="select-action-btn select-action-btn--danger" onclick="deleteSelected()" title="Delete selected">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2102,6 +2109,33 @@
             }).catch(() => {
                 showToast('Failed to copy');
             });
+        }
+
+        async function duplicateSelected() {
+            const selected = getSelectedTransactions();
+            if (selected.length === 0) return;
+
+            let created = 0;
+            for (const t of selected) {
+                const newId = 'txn-' + Date.now() + '-' + created;
+                const dup = {
+                    id: newId,
+                    amount: t.amount,
+                    currency: t.currency || 'USD',
+                    category: t.category,
+                    description: t.description,
+                    payment_method: t.paymentMethod,
+                    date: t.date,
+                    source: 'web-duplicate',
+                    status: t.status || 'confirmed'
+                };
+                const { error } = await sb.from('transactions').insert(dup);
+                if (!error) created++;
+            }
+
+            showToast(`Duplicated ${created} expense${created > 1 ? 's' : ''}`);
+            document.getElementById('selectAllCheckbox').checked = false;
+            loadData();
         }
 
         async function deleteSelected() {
